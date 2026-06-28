@@ -165,15 +165,16 @@
 
 <script setup>
 import { ref, reactive } from 'vue'
-import { useRouter } from 'vue-router' // <-- 1. Import useRouter
+import { useRouter } from 'vue-router'
+import api from '../api.js' 
+
 
 // background login
 const backgroundImageUrl = ref('src/assets/bg-login.jpg')
 
-
 // Menggunakan string state ('login', 'changePassword', 'register') untuk kontrol multi-form
 const currentForm = ref('login')
-const router = useRouter() // <-- 2. Inisialisasi fungsi router
+const router = useRouter()
 
 // Data form login
 const loginForm = reactive({
@@ -197,47 +198,90 @@ const registerForm = reactive({
   confirmPassword: ''
 })
 
-const handleLogin = () => {
-  console.log('Login:', loginForm)
-  
-  // 1. Kondisi untuk Super Admin
-  if (loginForm.email === 'superadmin@example.com' && loginForm.password === 'superadmin') {
-    // Jika Super Admin, pindah ke halaman khusus Super Admin
-    router.push('/dashboardsuperadmin')
-    
-  // 2. Kondisi untuk Admin Hotel (Admin1) yang baru kita tambahkan
-  } else if (loginForm.email === 'admin1@gmail.com' && loginForm.password === 'admin1') {
-    // Jika Admin1, arahkan ke halaman khusus Admin Hotel
-    // Catatan: Pastikan kamu sudah membuat route '/dashboardadmin' atau nama halaman admin hotelmu di router kamu
-    router.push('/dashboardadmin') 
-    
-  } else if (loginForm.email === 'user1@gmail.com' && loginForm.password === 'user1') {
-    // Jika user1, arahkan ke halaman khusus pelanggan Hotel
-    // Catatan: Pastikan kamu sudah membuat route '/dashboarduser' atau nama halaman admin hotelmu di router kamu
-    router.push('/dashboarduser') 
+// === PERBAIKAN: Fungsi handleLogin Bersih & Menggunakan 'superadmin' ===
+const handleLogin = async () => {
+  try {
+    const response = await api.post('/auth/login', {
+      email: loginForm.email,
+      password: loginForm.password
+    });
 
-  } else {
-    // Jika akun tidak terdaftar / salah input
-    alert('Email atau Password salah! Periksa kembali akun Anda.')
+    const role = response.data.user.role; 
+    const token = response.data.token; 
+
+    if (token) {
+      // Pastikan disimpan dengan string murni huruf kecil tanpa spasi
+      const cleanRole = String(role).trim().toLowerCase();
+
+      localStorage.setItem('token', token);
+      localStorage.setItem('role', cleanRole);
+
+      // PERBAIKAN UTAMA: Gunakan 'superadmin' tanpa strip (-)
+      if (cleanRole === 'super-admin') {
+        router.push('/dashboardsuperadmin');
+      } else if (cleanRole === 'admin') {
+        router.push('/dashboardadmin');
+      } else if (cleanRole === 'customer') {
+        router.push('/dashboarduser');
+      } else {
+        router.push('/');
+      }
+
+      alert('Login Berhasil!');
+
+      
+    }
+
+  } catch (error) {
+    console.error('Login Error:', error);
+    const errorMessage = error.response?.data?.message || 'Email atau Password salah!';
+    alert(errorMessage);
   }
 }
 
-const handleChangePassword = () => {
+const handleLogout = () => {
+  localStorage.removeItem('token');
+  localStorage.removeItem('role');
+  router.push('/login');
+};
+
+const handleChangePassword = async () => {
   if (changeForm.newPassword !== changeForm.confirmPassword) {
     alert('Konfirmasi password baru tidak cocok!')
     return
   }
-  console.log('Proses ganti password:', changeForm)
-  currentForm.value = 'login'
+  
+  try {
+    await api.post('/auth/change-password', {
+      email: changeForm.email,
+      currentPassword: changeForm.currentPassword,
+      password: changeForm.newPassword
+    })
+    alert('Password berhasil diubah!')
+    currentForm.value = 'login'
+  } catch (error) {
+    console.error(error)
+    alert('Ganti password gagal.')
+  }
 }
 
-const handleRegister = () => {
+const handleRegister = async () => {
   if (registerForm.newPassword !== registerForm.confirmPassword) {
     alert('Konfirmasi password tidak cocok!')
     return
   }
-  console.log('Proses pendaftaran akun:', registerForm)
-  alert('Akun berhasil dibuat!')
-  currentForm.value = 'login' // Otomatis balik ke form login setelah sukses register
+  
+  try {
+    await api.post('/auth/register', {
+      name: registerForm.username,
+      email: registerForm.email,
+      password: registerForm.newPassword
+    })
+    alert('Akun berhasil dibuat!')
+    currentForm.value = 'login'
+  } catch (error) {
+    console.error(error)
+    alert('Pendaftaran gagal.')
+  }
 }
 </script>

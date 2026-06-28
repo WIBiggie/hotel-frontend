@@ -1,8 +1,8 @@
 import { createApp } from 'vue'
 import App from './App.vue'
-import router from './router' // <-- Tambahkan import ini
+import router from './router' // Menghubungkan ke file konfigurasi router kamu
 import './style.css'
 
 const app = createApp(App)
-app.use(router) // <-- Pasang router di aplikasi Vue
+app.use(router) 
 app.mount('#app')

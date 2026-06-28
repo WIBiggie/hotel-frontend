@@ -140,15 +140,125 @@
   </div>
 </template>
 
+
+
 <script setup>
-import { ref } from 'vue'
+import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
+import api from '../api' 
 
+const backgroundImageUrl = ref('src/assets/bg-login.jpg')
+const currentForm = ref('login')
 const router = useRouter()
+const isLoading = ref(false) 
 
-const isSidebarOpen = ref(false)
+// 2. FUNGSI LOGIN (DISESUAIKAN STRUKTUR RESPONSE LARAVEL)
+const handleLogin = async () => {
+  try {
+    isLoading.value = true
+    
+    const response = await api.post('/auth/login', {
+      email: loginForm.email,
+      password: loginForm.password
+    })
+    
+    // CATATAN PENTING: Sesuaikan destruksi ini dengan isi JSON backend kamu.
+    // Jika bentuknya { token: '...', role: '...' } gunakan baris di bawah:
+    const { token, role } = response.data
+    
+    // JIKA bentuknya { data: { token: '...', user: { role: '...' } } }, ubah menjadi:
+    // const token = response.data.data?.token || response.data.token
+    // const role = response.data.data?.user?.role || response.data.role
+    
+    if (token) {
+      // SIMPAN KE BROWSER
+      localStorage.setItem('token', token)
+      localStorage.setItem('role', role)
+      
+      alert('Login Berhasil!')
+      
+      // Arahkan halaman sesuai hak akses role dari database backend
+      if (role === 'super-admin') {
+        router.push('/dashboardsuperadmin')
+      } else if (role === 'admin') {
+        router.push('/dashboardadmin')
+      } else {
+        router.push('/dashboarduser')
+      }
+    } else {
+      alert('Gagal mendapatkan token otentikasi dari server.')
+    }
+  } catch (error) {
+    console.error('Login Error:', error)
+    const errorMsg = error.response?.data?.message || 'Email atau Password salah!'
+    alert(errorMsg)
+  } finally {
+    isLoading.value = false
+  }
+}
 
-const handleLogout = () => {
-  router.push('/')
+// 3. FUNGSI GANTI PASSWORD (DIALIKKAN KE /auth/me ATAU ADAPTER KARENA ENDPOINT KHUSUS TIDAK ADA DI DOCS)
+const handleChangePassword = async () => {
+  if (changeForm.newPassword !== changeForm.confirmPassword) {
+    alert('Konfirmasi password baru tidak cocok!')
+    return
+  }
+  
+  try {
+    isLoading.value = true
+    // Catatan: Karena di dokumen rute tidak ada /auth/change-password, 
+    // jika backend kamu menggunakan PUT ke rute profile untuk ganti password, sesuaikan di sini.
+    await api.post('/auth/change-password', {
+      email: changeForm.email,
+      currentPassword: changeForm.currentPassword,
+      password: changeForm.newPassword
+    })
+    
+    alert('Password berhasil diubah! Silakan login kembali.')
+    currentForm.value = 'login'
+    
+    // Reset form
+    changeForm.email = ''
+    changeForm.currentPassword = ''
+    changeForm.newPassword = ''
+    changeForm.confirmPassword = ''
+  } catch (error) {
+    console.error('Change Password Error:', error)
+    alert(error.response?.data?.message || 'Fitur ganti password belum didukung atau rute salah.')
+  } finally {
+    isLoading.value = false
+  }
+}
+
+// 4. FUNGSI REGISTER (DISESUAIKAN PARAMETER DENGAN ENDPOINT /auth/register)
+const handleRegister = async () => {
+  if (registerForm.newPassword !== registerForm.confirmPassword) {
+    alert('Konfirmasi password tidak cocok!')
+    return
+  }
+  
+  try {
+    isLoading.value = true
+    // Tembak endpoint registrasi sesuai dokumen (Public)
+    await api.post('/auth/register', {
+      name: registerForm.name, // disesuaikan dari username -> name jika backend Laravel menggunakan standar kolom 'name'
+      email: registerForm.email,
+      password: registerForm.newPassword
+    })
+    
+    alert('Akun berhasil dibuat! Silakan masuk.')
+    currentForm.value = 'login'
+    
+    // Reset form register
+    registerForm.name = ''
+    registerForm.email = ''
+    registerForm.newPassword = ''
+    registerForm.confirmPassword = ''
+  } catch (error) {
+    console.error('Register Error:', error)
+    alert(error.response?.data?.message || 'Pendaftaran akun gagal.')
+  } finally {
+    isLoading.value = false
+  }
 }
 </script>

@@ -3,270 +3,241 @@
     
     <header class="md:hidden bg-white border-b border-gray-200 p-4 flex justify-between items-center z-30 shadow-sm print:hidden">
       <div class="flex items-center gap-2">
-        <div class="w-8 h-8 bg-[#2e3a50] rounded-full flex justify-center items-center text-white text-md">
-          🏨
-        </div>
+        <div class="w-8 h-8 bg-[#2e3a50] rounded-full flex justify-center items-center text-white text-md">🏨</div>
         <h2 class="text-sm font-bold text-gray-700">One Hotel Admin</h2>
       </div>
-      <button 
-        @click="isSidebarOpen = !isSidebarOpen" 
-        class="p-2 text-gray-600 hover:bg-gray-100 rounded-lg text-xl cursor-pointer"
-      >
+      <button @click="isSidebarOpen = !isSidebarOpen" class="p-2 text-gray-600 hover:bg-gray-100 rounded-lg text-xl cursor-pointer">
         {{ isSidebarOpen ? '✕' : '☰' }}
       </button>
     </header>
 
-    <div 
-      v-if="isSidebarOpen" 
-      @click="isSidebarOpen = false" 
-      class="md:hidden fixed inset-0 bg-black/40 z-20 transition-opacity print:hidden"
-    ></div>
+    <div v-if="isSidebarOpen" @click="isSidebarOpen = false" class="md:hidden fixed inset-0 bg-black/40 z-20 transition-opacity print:hidden"></div>
 
-    <aside 
-      class="fixed inset-y-0 left-0 transform md:relative md:translate-x-0 w-64 bg-white border-r border-gray-200 flex flex-col justify-between p-5 shadow-sm z-20 transition-transform duration-300 ease-in-out print:hidden"
-      :class="isSidebarOpen ? 'translate-x-0 pt-20 md:pt-5' : '-translate-x-full'"
-    >
+    <aside class="fixed inset-y-0 left-0 transform md:relative md:translate-x-0 w-64 bg-white border-r border-gray-200 flex flex-col justify-between p-5 shadow-sm z-20 transition-transform duration-300 ease-in-out print:hidden" :class="isSidebarOpen ? 'translate-x-0 pt-20 md:pt-5' : '-translate-x-full'">
       <div>
         <div class="hidden md:flex items-center gap-3 mb-8 pb-4 border-b border-gray-100">
-          <div class="w-10 h-10 bg-[#2e3a50] rounded-full flex justify-center items-center text-white text-md font-bold shadow-sm">
-            ADM
+          <div class="w-10 h-10 bg-[#2e3a50] rounded-full flex justify-center items-center text-white text-xl shadow-sm">🏨</div>
+          <div class="flex-1">
+            <h2 class="text-sm font-bold text-gray-700">Hotel Admin</h2>
+            <p class="text-xs text-green-500 font-medium">● Connected to Server</p>
           </div>
-          <div>
-            <h2 class="text-sm font-bold text-gray-700">Admin Utama</h2>
-            <p class="text-[10px] text-emerald-600 font-semibold flex items-center gap-1">🟢 Super Admin</p>
-          </div>
+          <button @click="handleLogout" class="text-red-500 hover:text-red-700 p-1.5 rounded-lg hover:bg-red-50 text-lg cursor-pointer transition-colors" title="Logout">🚪</button>
         </div>
 
         <div class="space-y-1">
-          <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 px-3">Main Menu</p>
-          <button 
-            @click="currentMenu = 'rooms'; isSidebarOpen = false;" 
-            class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-left font-medium transition-colors" 
-            :class="currentMenu === 'rooms' ? 'bg-slate-100 text-[#2e3a50] font-semibold' : 'text-gray-600 hover:bg-gray-50'"
-          >
-            🛏️ Manajemen Kamar
-          </button>
-          <button 
-            @click="currentMenu = 'types'; isSidebarOpen = false;" 
-            class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-left font-medium transition-colors" 
-            :class="currentMenu === 'types' ? 'bg-slate-100 text-[#2e3a50] font-semibold' : 'text-gray-600 hover:bg-gray-50'"
-          >
-            ✨ Tipe &amp; Fasilitas
-          </button>
-          <button 
-            @click="currentMenu = 'report'; isSidebarOpen = false;" 
-            class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-left font-medium transition-colors" 
-            :class="currentMenu === 'report' ? 'bg-slate-100 text-[#2e3a50] font-semibold' : 'text-gray-600 hover:bg-gray-50'"
-          >
-            📋 Report
-          </button>
+          <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 px-3">Menu Admin</p>
+          <button @click="currentTab = 'overview'" :class="currentTab === 'overview' ? 'bg-indigo-50 text-indigo-700 font-medium border border-indigo-100' : 'text-gray-600 hover:bg-gray-50'" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-left transition-colors cursor-pointer">📊 Overview & Reports</button>
+          <button @click="currentTab = 'rooms'" :class="currentTab === 'rooms' ? 'bg-indigo-50 text-indigo-700 font-medium border border-indigo-100' : 'text-gray-600 hover:bg-gray-50'" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-left transition-colors cursor-pointer">🛏️ Manage Rooms</button>
+          <button @click="currentTab = 'roomTypes'" :class="currentTab === 'roomTypes' ? 'bg-indigo-50 text-indigo-700 font-medium border border-indigo-100' : 'text-gray-600 hover:bg-gray-50'" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-left transition-colors cursor-pointer">🏷️ Room Types</button>
         </div>
       </div>
-      
-      <div class="space-y-4 border-t border-gray-100 pt-4">
-        <button @click="handleLogout" class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-100 rounded-lg text-xs font-bold transition-colors cursor-pointer">
-          🚪 Keluar Aplikasi
-        </button>
-        <div class="text-center text-[11px] text-gray-400">&copy; 2026 One Hotel Admin Panel</div>
+      <div class="md:hidden block mb-4">
+        <button @click="handleLogout" class="w-full px-4 py-2 bg-red-50 text-red-600 border border-red-100 rounded-lg font-bold text-sm text-center">Logout</button>
       </div>
     </aside>
 
-    <main class="flex-1 flex flex-col p-4 md:p-8 overflow-y-auto print:p-0 print:overflow-visible">
+    <main class="flex-1 flex flex-col p-4 md:p-8 overflow-y-auto bg-slate-50/50">
       
-      <div v-if="currentMenu === 'rooms'" class="space-y-6">
-        <div class="flex justify-between items-center">
-          <div>
-            <h1 class="text-xl font-bold">Manajemen Data Kamar</h1>
-            <p class="text-xs text-gray-500">Kelola nomor kamar, posisi lantai, dan status operasional ketersediaan.</p>
-          </div>
-          <button @click="openCreateRoomModal" class="bg-[#2e3a50] text-white text-xs font-bold px-4 py-2 rounded-lg hover:bg-opacity-90 cursor-pointer">
-            + Tambah Kamar
-          </button>
-        </div>
-
-        <div class="flex border-b border-gray-200 gap-2 text-xs">
-          <button v-for="tab in ['All', 'Available', 'Occupied', 'Dirty']" :key="tab" @click="activeRoomTab = tab" class="px-4 py-2 font-medium" :class="activeRoomTab === tab ? 'border-b-2 border-[#2e3a50] text-[#2e3a50]' : 'text-gray-400'">
-            {{ tab }}
-          </button>
-        </div>
-
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-          <table class="w-full text-left border-collapse text-xs">
-            <thead>
-              <tr class="bg-gray-50 border-b border-gray-200 text-gray-500 font-semibold">
-                <th class="p-3">Nomor Kamar</th>
-                <th class="p-3">Tipe Kamar</th>
-                <th class="p-3">Lantai</th>
-                <th class="p-3">Status</th>
-                <th class="p-3 text-center">Aksi</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-100 text-gray-700">
-              <tr v-for="(room, idx) in filteredRooms" :key="idx">
-                <td class="p-3 font-bold">{{ room.number }}</td>
-                <td class="p-3">{{ room.type }}</td>
-                <td class="p-3 text-gray-500">{{ room.floor }}</td>
-                <td class="p-3">
-                  <span :class="{
-                    'text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded': room.status === 'Available',
-                    'text-blue-600 bg-blue-50 px-2 py-0.5 rounded': room.status === 'Occupied',
-                    'text-amber-600 bg-amber-50 px-2 py-0.5 rounded': room.status === 'Dirty'
-                  }">{{ room.status }}</span>
-                </td>
-                <td class="p-3 text-center space-x-2">
-                  <button @click="openEditRoomModal(idx)" class="text-indigo-600 hover:underline cursor-pointer">Edit</button>
-                  <button @click="deleteRoom(idx)" class="text-rose-600 hover:underline cursor-pointer">Hapus</button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+      <div v-if="isLoading" class="text-center py-12 text-gray-500 font-medium">
+        Memuat data dari server backend...
       </div>
 
-      <div v-if="currentMenu === 'types'" class="space-y-6">
-        <div class="flex justify-between items-center">
-          <div>
-            <h1 class="text-xl font-bold">Kategori &amp; Spesifikasi Tipe Kamar</h1>
-            <p class="text-xs text-gray-500">Atur penamaan kelas kamar, kapasitas muatan maksimum tamu, dan harga sewa.</p>
+      <div v-else>
+        <div v-if="currentTab === 'overview'" class="space-y-6">
+          <div class="flex justify-between items-center print:hidden">
+            <h2 class="text-xl font-bold text-gray-800">Hotel Report Overview</h2>
+            <button @click="printReport" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-sm transition-colors cursor-pointer">🖨️ Print Report</button>
           </div>
-          <button @click="openCreateRoomTypeModal" class="bg-[#2e3a50] text-white text-xs font-bold px-4 py-2 rounded-lg hover:bg-opacity-90 cursor-pointer">
-            + Tambah Tipe
-          </button>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+              <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Total Rooms</p>
+              <h3 class="text-2xl font-bold text-gray-900 mt-1">{{ stats.totalRooms }}</h3>
+            </div>
+            <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+              <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Available Rooms</p>
+              <h3 class="text-2xl font-bold text-green-600 mt-1">{{ stats.availableRooms }}</h3>
+            </div>
+            <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+              <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Total Booked / Transactions</p>
+              <h3 class="text-2xl font-bold text-indigo-600 mt-1">{{ stats.totalTransactions }}</h3>
+            </div>
+          </div>
+
+          <section class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div class="p-4 bg-gray-50 border-b border-gray-200 font-bold text-sm text-gray-700">Recent Transactions History</div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-sm min-w-[600px]">
+                <thead class="bg-slate-100 text-gray-600 font-semibold border-b border-gray-200">
+                  <tr>
+                    <th class="p-3 w-16 text-center">No</th>
+                    <th class="p-3">Guest Name</th>
+                    <th class="p-3">Room</th>
+                    <th class="p-3">Type</th>
+                    <th class="p-3">Check In</th>
+                    <th class="p-3">Status</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100 text-gray-700">
+                  <tr v-for="(tx, index) in transactions" :key="tx.id || index" class="hover:bg-slate-50/50">
+                    <td class="p-3 text-center text-gray-400">{{ index + 1 }}</td>
+                    <td class="p-3 font-semibold text-gray-900">{{ tx.guest_name }}</td>
+                    <td class="p-3">Room {{ tx.room_number }}</td>
+                    <td class="p-3 text-indigo-600">{{ tx.room_type }}</td>
+                    <td class="p-3 text-gray-500">{{ tx.check_in }}</td>
+                    <td class="p-3">
+                      <span :class="tx.status === 'success' ? 'bg-green-50 text-green-600 border border-green-100' : 'bg-amber-50 text-amber-600 border border-amber-100'" class="px-2 py-0.5 text-xs font-semibold rounded-full uppercase">
+                        {{ tx.status }}
+                      </span>
+                    </td>
+                  </tr>
+                  <tr v-if="transactions.length === 0">
+                    <td colspan="6" class="p-6 text-center text-gray-400 italic">Belum ada riwayat transaksi.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-          <table class="w-full text-left border-collapse text-xs">
-            <thead>
-              <tr class="bg-gray-50 border-b border-gray-200 text-gray-500 font-semibold">
-                <th class="p-3">Nama Tipe</th>
-                <th class="p-3">Fasilitas Utama</th>
-                <th class="p-3 text-center">Kapasitas</th>
-                <th class="p-3 text-right">Harga / Malam</th>
-                <th class="p-3 text-center">Aksi</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-100 text-gray-700">
-              <tr v-for="(t, idx) in roomTypes" :key="idx">
-                <td class="p-3 font-bold">{{ t.name }}</td>
-                <td class="p-3 text-gray-500">{{ t.facilities }}</td>
-                <td class="p-3 text-center">{{ t.capacity }} Pax</td>
-                <td class="p-3 text-right font-semibold">Rp {{ t.price.toLocaleString('id-ID') }}</td>
-                <td class="p-3 text-center space-x-2">
-                  <button @click="openEditRoomTypeModal(idx)" class="text-indigo-600 hover:underline cursor-pointer">Edit</button>
-                  <button @click="deleteRoomType(idx)" class="text-rose-600 hover:underline cursor-pointer">Hapus</button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        <div v-if="currentTab === 'rooms'" class="space-y-4">
+          <div class="flex justify-between items-center">
+            <h2 class="text-xl font-bold text-gray-800">Room Management</h2>
+            <button @click="openCreateRoomModal" class="bg-[#1e293b] hover:bg-black text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all cursor-pointer shadow-sm">Add Room +</button>
+          </div>
+
+          <section class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-sm min-w-[500px]">
+                <thead class="bg-[#2e3a50] text-white font-semibold">
+                  <tr>
+                    <th class="p-3 w-16 text-center">No</th>
+                    <th class="p-3">Room Number</th>
+                    <th class="p-3">Room Type</th>
+                    <th class="p-3 text-center">Status</th>
+                    <th class="p-3 w-32 text-center">Action</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100 text-gray-700 bg-white">
+                  <tr v-for="(room, index) in rooms" :key="room.id || index" class="hover:bg-slate-50/80">
+                    <td class="p-3 text-center text-gray-400">{{ index + 1 }}</td>
+                    <td class="p-3 font-bold text-gray-900">Room {{ room.number }}</td>
+                    <td class="p-3 text-indigo-600 font-semibold">{{ room.type_name }}</td>
+                    <td class="p-3 text-center">
+                      <span :class="room.status === 'available' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'" class="px-3 py-1 rounded-full text-xs font-bold uppercase">
+                        {{ room.status }}
+                      </span>
+                    </td>
+                    <td class="p-3 text-center">
+                      <div class="flex justify-center gap-2">
+                        <button @click="deleteRoom(room.id)" class="bg-red-500 hover:bg-red-600 p-1.5 rounded text-white text-xs cursor-pointer shadow-sm">🗑️</button>
+                        <button @click="openEditRoomModal(room)" class="bg-indigo-600 hover:bg-indigo-700 p-1.5 rounded text-white text-xs cursor-pointer shadow-sm">✏️</button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+
+        <div v-if="currentTab === 'roomTypes'" class="space-y-4">
+          <div class="flex justify-between items-center">
+            <h2 class="text-xl font-bold text-gray-800">Room Types Configurations</h2>
+            <button @click="openCreateRoomTypeModal" class="bg-[#1e293b] hover:bg-black text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all cursor-pointer shadow-sm">Add Type +</button>
+          </div>
+
+          <section class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-sm min-w-[600px]">
+                <thead class="bg-[#2e3a50] text-white font-semibold">
+                  <tr>
+                    <th class="p-3 w-16 text-center">No</th>
+                    <th class="p-3">Type Name</th>
+                    <th class="p-3">Facilities</th>
+                    <th class="p-3 text-center">Capacity</th>
+                    <th class="p-3">Price / Night</th>
+                    <th class="p-3 w-32 text-center">Action</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100 text-gray-700 bg-white">
+                  <tr v-for="(type, index) in roomTypes" :key="type.id || index" class="hover:bg-slate-50/80">
+                    <td class="p-3 text-center text-gray-400">{{ index + 1 }}</td>
+                    <td class="p-3 font-bold text-gray-900">{{ type.name }}</td>
+                    <td class="p-3 text-gray-500 text-xs max-w-xs truncate">{{ type.facilities }}</td>
+                    <td class="p-3 text-center font-bold">{{ type.capacity }} Pax</td>
+                    <td class="p-3 text-emerald-600 font-bold">Rp {{ type.price_per_night?.toLocaleString('id-ID') }}</td>
+                    <td class="p-3 text-center">
+                      <div class="flex justify-center gap-2">
+                        <button @click="deleteRoomType(type.id)" class="bg-red-500 hover:bg-red-600 p-1.5 rounded text-white text-xs cursor-pointer shadow-sm">🗑️</button>
+                        <button @click="openEditRoomTypeModal(type)" class="bg-indigo-600 hover:bg-indigo-700 p-1.5 rounded text-white text-xs cursor-pointer shadow-sm">✏️</button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
         </div>
       </div>
-
-      <div v-if="currentMenu === 'report'" class="space-y-6 w-full">
-        
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-gray-200 pb-4">
-          <div>
-            <h1 class="text-2xl font-bold text-gray-900 tracking-tight print:text-xl">Laporan Riwayat Pesanan Hotel</h1>
-            <p class="text-xs text-gray-500 mt-0.5 print:hidden">Rekapitulasi seluruh data reservasi kamar dari pelanggan.</p>
-            <p class="hidden print:block text-[10px] text-gray-400 mt-1">Dicetak pada: {{ new Date().toLocaleString('id-ID') }} | Dokumen Resmi Administrasi One Hotel</p>
-          </div>
-          
-          <button 
-            @click="printReport" 
-            class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-4 py-2.5 rounded-lg shadow-sm print:hidden transition-all active:scale-95 cursor-pointer"
-          >
-            🖨️ Cetak Laporan
-          </button>
-        </div>
-
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden print:border-none print:shadow-none">
-          <table class="w-full text-left border-collapse text-xs">
-            <thead>
-              <tr class="bg-gray-50 border-b border-gray-200 text-gray-500 font-semibold print:bg-gray-100">
-                <th class="p-3">Nama Tamu</th>
-                <th class="p-3">Kamar</th>
-                <th class="p-3">Tanggal Check-In</th>
-                <th class="p-3">Tanggal Check-Out</th>
-                <th class="p-3 text-center">Status</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-100 text-gray-700">
-              <tr v-for="(item, idx) in historyReservations" :key="idx" class="hover:bg-gray-50/50">
-                <td class="p-3 font-bold text-gray-800">{{ item.guest }}</td>
-                <td class="p-3 font-medium">{{ item.room }}</td>
-                <td class="p-3 text-gray-500">{{ item.checkIn }}</td>
-                <td class="p-3 text-gray-500">{{ item.checkOut }}</td>
-                <td class="p-3 text-center">
-                  <span class="px-2.5 py-0.5 rounded text-[10px] font-bold border bg-emerald-50 text-emerald-600 border-emerald-100">
-                    {{ item.status }}
-                  </span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
     </main>
 
-    <div v-if="isRoomModalOpen" class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 print:hidden">
-      <div class="bg-white rounded-xl shadow-lg p-6 w-full max-w-md">
-        <h3 class="text-sm font-bold mb-4">{{ isEditRoomMode ? 'Edit Kamar' : 'Tambah Kamar Baru' }}</h3>
-        <div class="space-y-3 text-xs">
+    <div v-if="isRoomModalOpen" class="fixed inset-0 bg-black/50 flex justify-center items-center z-50 p-4">
+      <div class="bg-white w-full max-w-sm rounded-xl shadow-xl overflow-hidden">
+        <div class="bg-[#2e3a50] text-white p-4 font-bold text-sm">{{ isEditRoomMode ? 'Edit Room' : 'Add New Room' }}</div>
+        <form @submit.prevent="submitRoom" class="p-4 space-y-3">
           <div>
-            <label class="block font-medium mb-1">Nomor Kamar</label>
-            <input type="text" v-model="formRoom.number" class="w-full border p-2 rounded" />
+            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Room Number</label>
+            <input v-model="formRoom.number" type="text" required placeholder="e.g. 101" class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:border-indigo-500" />
           </div>
           <div>
-            <label class="block font-medium mb-1">Tipe Kamar</label>
-            <select v-model="formRoom.type" class="w-full border p-2 rounded">
-              <option v-for="t in roomTypes" :key="t.name" :value="t.name">{{ t.name }}</option>
+            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Room Type</label>
+            <select v-model="formRoom.type_name" required class="w-full px-3 py-2 border rounded-lg text-sm bg-white focus:outline-none focus:border-indigo-500">
+              <option v-for="t in roomTypes" :key="t.id" :value="t.name">{{ t.name }}</option>
             </select>
           </div>
           <div>
-            <label class="block font-medium mb-1">Lantai</label>
-            <input type="text" v-model="formRoom.floor" class="w-full border p-2 rounded" />
-          </div>
-          <div>
-            <label class="block font-medium mb-1">Status</label>
-            <select v-model="formRoom.status" class="w-full border p-2 rounded">
-              <option value="Available">Available</option>
-              <option value="Occupied">Occupied</option>
-              <option value="Dirty">Dirty</option>
+            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Status</label>
+            <select v-model="formRoom.status" required class="w-full px-3 py-2 border rounded-lg text-sm bg-white focus:outline-none focus:border-indigo-500">
+              <option value="available">Available</option>
+              <option value="booked">Booked</option>
             </select>
           </div>
-        </div>
-        <div class="flex justify-end gap-2 mt-6 text-xs">
-          <button @click="closeRoomModal" class="px-4 py-2 border rounded cursor-pointer">Batal</button>
-          <button @click="submitRoom" class="px-4 py-2 bg-[#2e3a50] text-white rounded cursor-pointer">Simpan</button>
-        </div>
+          <div class="flex justify-end gap-2 pt-3 border-t">
+            <button type="button" @click="closeRoomModal" class="px-3 py-1.5 text-xs font-semibold text-gray-500 hover:bg-gray-100 rounded-lg">Cancel</button>
+            <button type="submit" class="px-4 py-1.5 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-sm">Save Room</button>
+          </div>
+        </form>
       </div>
     </div>
 
-    <div v-if="isRoomTypeModalOpen" class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 print:hidden">
-      <div class="bg-white rounded-xl shadow-lg p-6 w-full max-w-md">
-        <h3 class="text-sm font-bold mb-4">{{ isEditRoomTypeMode ? 'Edit Tipe Kamar' : 'Tambah Tipe Kamar' }}</h3>
-        <div class="space-y-3 text-xs">
+    <div v-if="isRoomTypeModalOpen" class="fixed inset-0 bg-black/50 flex justify-center items-center z-50 p-4">
+      <div class="bg-white w-full max-w-sm rounded-xl shadow-xl overflow-hidden">
+        <div class="bg-[#2e3a50] text-white p-4 font-bold text-sm">{{ isEditRoomTypeMode ? 'Edit Room Type' : 'Add New Room Type' }}</div>
+        <form @submit.prevent="submitRoomType" class="p-4 space-y-3">
           <div>
-            <label class="block font-medium mb-1">Nama Tipe</label>
-            <input type="text" v-model="formRoomType.name" class="w-full border p-2 rounded" />
+            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Type Name</label>
+            <input v-model="formRoomType.name" type="text" required placeholder="e.g. Deluxe Room" class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:border-indigo-500" />
           </div>
           <div>
-            <label class="block font-medium mb-1">Fasilitas Utama</label>
-            <input type="text" v-model="formRoomType.facilities" class="w-full border p-2 rounded" placeholder="AC, Wi-Fi" />
+            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Facilities</label>
+            <input v-model="formRoomType.facilities" type="text" required placeholder="AC, Wifi, TV, Mini Bar" class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:border-indigo-500" />
           </div>
-          <div>
-            <label class="block font-medium mb-1">Kapasitas</label>
-            <input type="number" v-model="formRoomType.capacity" class="w-full border p-2 rounded" />
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Capacity</label>
+              <input v-model.number="formRoomType.capacity" type="number" required min="1" class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:border-indigo-500" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Price / Night</label>
+              <input v-model.number="formRoomType.price" type="number" required min="0" placeholder="500000" class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:border-indigo-500" />
+            </div>
           </div>
-          <div>
-            <label class="block font-medium mb-1">Harga / Malam</label>
-            <input type="number" v-model="formRoomType.price" class="w-full border p-2 rounded" />
+          <div class="flex justify-end gap-2 pt-3 border-t">
+            <button type="button" @click="closeRoomTypeModal" class="px-3 py-1.5 text-xs font-semibold text-gray-500 hover:bg-gray-100 rounded-lg">Cancel</button>
+            <button type="submit" class="px-4 py-1.5 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-sm">Save Type</button>
           </div>
-        </div>
-        <div class="flex justify-end gap-2 mt-6 text-xs">
-          <button @click="closeRoomTypeModal" class="px-4 py-2 border rounded cursor-pointer">Batal</button>
-          <button @click="submitRoomType" class="px-4 py-2 bg-[#2e3a50] text-white rounded cursor-pointer">Simpan</button>
-        </div>
+        </form>
       </div>
     </div>
 
@@ -274,110 +245,186 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import api from '../api' // <-- Pastikan import konfigurasi Axios kamu sudah mengarah ke file yang benar
 
 const router = useRouter()
-const currentMenu = ref('rooms')
 const isSidebarOpen = ref(false)
+const currentTab = ref('overview')
+const isLoading = ref(false)
+const currentSelectedId = ref(null)
 
-// STATE UTAMA MANAJEMEN KAMAR BAWAAN ASLI
+// Core Database States
+const rooms = ref([])
+const roomTypes = ref([])
+const transactions = ref([])
+const stats = ref({ totalRooms: 0, availableRooms: 0, totalTransactions: 0 })
+
+// Modals Control Rooms
 const isRoomModalOpen = ref(false)
 const isEditRoomMode = ref(false)
-const currentRoomEditIdx = ref(null)
-const activeRoomTab = ref('All')
-const searchRoomQuery = ref('')
-const formRoom = ref({ number: '', type: 'Deluxe Room', floor: '', status: 'Available' })
+const formRoom = ref({ number: '', type_name: '', status: 'available' })
 
-const rooms = ref([
-  { number: '101', type: 'Deluxe Room', floor: '1st Floor', status: 'Available' },
-  { number: '102', type: 'Deluxe Room', floor: '1st Floor', status: 'Occupied' },
-  { number: '201', type: 'Suite Room', floor: '2nd Floor', status: 'Dirty' }
-])
-
-// STATE UTAMA TIPE KAMAR BAWAAN ASLI
+// Modals Control Room Types
 const isRoomTypeModalOpen = ref(false)
 const isEditRoomTypeMode = ref(false)
-const currentRoomTypeEditIdx = ref(null)
-const formRoomType = ref({ name: '', facilities: '', price: 0, capacity: 1 })
+const formRoomType = ref({ name: '', facilities: '', price: null, capacity: 2 })
 
-const roomTypes = ref([
-  { name: 'Standard Room', facilities: 'Single Bed, Free Wi-Fi, AC', price: 450000, capacity: 1 },
-  { name: 'Deluxe Room', facilities: 'King Bed, Balcony View, Bathtub', price: 1200000, capacity: 2 },
-  { name: 'Suite Room', facilities: 'King Bed, Kitchen, Mini Bar, Jacuzzi', price: 2500000, capacity: 4 }
-])
+// ================= AMBIL DATA NYATA (FETCH BACKEND) =================
+const fetchDashboardData = async () => {
+  try {
+    isLoading.value = true
+    
+    // 1. Ambil data kamar langsung dari endpoint publik/admin kamu (/rooms)
+    const roomsRes = await api.get('/rooms')
+    rooms.value = roomsRes.data.data || roomsRes.data
 
-// DATA REKAP UNTUK MENU LAPORAN / REPORT
-const historyReservations = ref([
-  { guest: 'John Doe', room: 'Room 102 (Deluxe)', checkIn: '24 Juni 2026', checkOut: '27 Juni 2026', status: 'Confirmed' },
-  { guest: 'Jane Smith', room: 'Room 101 (Standard)', checkIn: '25 Juni 2026', checkOut: '26 Juni 2026', status: 'Confirmed' }
-])
+    // 2. Ambil konfigurasi tipe kamar sesuai dokumentasi (/room-types)
+    const typesRes = await api.get('/room-types')
+    roomTypes.value = typesRes.data.data || typesRes.data
 
-// MANAJEMEN KAMAR LOGIC METHODS
-const filteredRooms = computed(() => {
-  let res = rooms.value
-  if (activeRoomTab.value !== 'All') res = res.filter(r => r.status === activeRoomTab.value)
-  if (searchRoomQuery.value) res = res.filter(r => r.number.includes(searchRoomQuery.value))
-  return res
+    // 3. Ambil data transaksi/reservasi dari endpoint booking (/bookings)
+    const bookingsRes = await api.get('/bookings')
+    transactions.value = bookingsRes.data.data || bookingsRes.data
+
+    // 4. Hitung statistik secara mandiri di frontend karena tidak ada endpoint khusus /dashboard-stats
+    const totalRoomsCount = rooms.value.length
+    // Asumsi di data kamar kamu terdapat kolom 'status' (misal: 'available' atau 'terisi')
+    const availableRoomsCount = rooms.value.filter(room => room.status === 'available' || room.status === 1).length 
+    const totalTxCount = transactions.value.length
+
+    stats.value = {
+      totalRooms: totalRoomsCount,
+      availableRooms: availableRoomsCount,
+      totalTransactions: totalTxCount
+    }
+
+  } catch (error) {
+    console.error('Error fetching admin data:', error)
+    if (error.response?.status === 401 || error.response?.status === 403) {
+      alert('Sesi masuk berakhir atau Anda tidak diizinkan mengakses panel ini.')
+      handleLogout()
+    }
+  } finally {
+    isLoading.value = false
+  }
+}
+
+// ROUTE PROTECTION GUARD ON MOUNT
+onMounted(() => {
+  const token = localStorage.getItem('token')
+  const role = localStorage.getItem('role')
+
+  // Mencegah akses masuk ilegal jika bukan admin hotel
+  if (!token || role !== 'admin') {
+    alert('Akses ditolak! Halaman ini memerlukan hak akses Admin Hotel.')
+    router.push('/')
+    return
+  }
+
+  fetchDashboardData()
 })
 
-const openCreateRoomModal = () => { isEditRoomMode.value = false; isRoomModalOpen.value = true }
-const openEditRoomModal = (idx) => {
-  isEditRoomMode.value = true; currentRoomEditIdx.value = idx
-  formRoom.value = { ...rooms.value[idx] }; isRoomModalOpen.value = true
+// ================= LOGIKA MANAGEMENT KAMAR (CRUD ROOMS) =================
+const openCreateRoomModal = () => {
+  isEditRoomMode.value = false
+  isRoomModalOpen.value = true
 }
-const closeRoomModal = () => { isRoomModalOpen.value = false; formRoom.value = { number: '', type: 'Deluxe Room', floor: '', status: 'Available' } }
-const submitRoom = () => {
-  if (isEditRoomMode.value) rooms.value[currentRoomEditIdx.value] = { ...formRoom.value }
-  else rooms.value.push({ ...formRoom.value })
-  closeRoomModal()
+const openEditRoomModal = (room) => {
+  isEditRoomMode.value = true
+  currentSelectedId.value = room.id
+  formRoom.value = { number: room.number, type_name: room.type_name, status: room.status }
+  isRoomModalOpen.value = true
 }
-const deleteRoom = (idx) => { if (confirm('Hapus kamar ini?')) rooms.value.splice(idx, 1) }
+const closeRoomModal = () => {
+  isRoomModalOpen.value = false
+  formRoom.value = { number: '', type_name: '', status: 'available' }
+}
+const submitRoom = async () => {
+  try {
+    if (isEditRoomMode.value) {
+      await api.put(`/admin/rooms/${currentSelectedId.value}`, formRoom.value)
+      alert('Kamar berhasil diperbarui!')
+    } else {
+      await api.post('/admin/rooms', formRoom.value)
+      alert('Kamar baru sukses ditambahkan!')
+    }
+    fetchDashboardData()
+    closeRoomModal()
+  } catch (error) {
+    alert(error.response?.data?.message || 'Gagal menyimpan data kamar.')
+  }
+}
+const deleteRoom = async (id) => {
+  if (confirm('Hapus kamar ini secara permanen dari database hotel?')) {
+    try {
+      await api.delete(`/admin/rooms/${id}`)
+      fetchDashboardData()
+    } catch (error) {
+      alert('Gagal menghapus kamar.')
+    }
+  }
+}
 
-// TIPE KAMAR LOGIC METHODS
-const openCreateRoomTypeModal = () => { isEditRoomTypeMode.value = false; isRoomTypeModalOpen.value = true }
-const openEditRoomTypeModal = (idx) => {
-  isEditRoomTypeMode.value = true; currentRoomTypeEditIdx.value = idx
-  formRoomType.value = { ...roomTypes.value[idx] }; isRoomTypeModalOpen.value = true
+// ================= LOGIKA MANAGEMENT TIPE KAMAR (CRUD ROOM TYPES) =================
+const openCreateRoomTypeModal = () => {
+  isEditRoomTypeMode.value = false
+  isRoomTypeModalOpen.value = true
 }
-const closeRoomTypeModal = () => { isRoomTypeModalOpen.value = false; formRoomType.value = { name: '', facilities: '', price: 0, capacity: 1 } }
-const submitRoomType = () => {
-  if (isEditRoomTypeMode.value) roomTypes.value[currentRoomTypeEditIdx.value] = { ...formRoomType.value }
-  else roomTypes.value.push({ ...formRoomType.value })
-  closeRoomTypeModal()
+const openEditRoomTypeModal = (type) => {
+  isEditRoomTypeMode.value = true
+  currentSelectedId.value = type.id
+  formRoomType.value = { name: type.name, facilities: type.facilities, price: type.price, capacity: type.capacity }
+  isRoomTypeModalOpen.value = true
 }
-const deleteRoomType = (idx) => { if (confirm('Hapus tipe kamar?')) roomTypes.value.splice(idx, 1) }
+const closeRoomTypeModal = () => {
+  isRoomTypeModalOpen.value = false
+  formRoomType.value = { name: '', facilities: '', price: null, capacity: 2 }
+}
+const submitRoomType = async () => {
+  try {
+    if (isEditRoomTypeMode.value) {
+      await api.put(`/admin/room-types/${currentSelectedId.value}`, formRoomType.value)
+      alert('Konfigurasi tipe kamar diperbarui!')
+    } else {
+      await api.post('/admin/room-types', formRoomType.value)
+      alert('Tipe kamar baru sukses ditambahkan!')
+    }
+    fetchDashboardData()
+    closeRoomTypeModal()
+  } catch (error) {
+    alert(error.response?.data?.message || 'Gagal menyimpan tipe kamar.')
+  }
+}
+const deleteRoomType = async (id) => {
+  if (confirm('Menghapus tipe kamar ini dapat berdampak pada data relasi kamar.')) {
+    try {
+      await api.delete(`/admin/room-types/${id}`)
+      fetchDashboardData()
+    } catch (error) {
+      alert('Gagal menghapus tipe kamar.')
+    }
+  }
+}
 
-// === FUNGSI UTAMA UNTUK CETAK/PRINT REPORT ===
+// PRINT REPORT FUNCTION
 const printReport = () => {
   window.print()
 }
 
+// LOGOUT CLEAR ACCESS
 const handleLogout = () => {
-  if (confirm("Apakah Anda yakin ingin keluar dari panel admin?")) {
-    router.push('/')
-  }
+  localStorage.removeItem('token')
+  localStorage.removeItem('role')
+  router.push('/')
 }
 </script>
 
 <style scoped>
-/* CSS KHUSUS PENGATURAN MEDIA CETAK (PRINT) */
 @media print {
   .print\:hidden {
     display: none !important;
-  }
-  body, html, .bg-gray-100 {
-    background-color: #ffffff !important;
-  }
-  table {
-    border: 1px solid #e2e8f0 !important;
-    width: 100% !important;
-  }
-  th, td {
-    padding: 10px !important;
-    border-bottom: 1px solid #e2e8f0 !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
   }
 }
 </style>
