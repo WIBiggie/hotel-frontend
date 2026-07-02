@@ -291,25 +291,26 @@ const handleLogout = () => {
             <thead class="sticky top-0 z-10">
               <tr class="bg-[#2e3a50] text-white font-semibold">
                 <th class="p-3.5 border-b border-gray-200 w-16 text-center">No</th>
-                <th class="p-3.5 border-b border-gray-200">Name</th> <th class="p-3.5 border-b border-gray-200">Email</th>
+                <th class="p-3.5 border-b border-gray-200">Name</th>
+                <th class="p-3.5 border-b border-gray-200">Email</th>
                 <th class="p-3.5 border-b border-gray-200">Role</th>
                 <th class="p-3.5 border-b border-gray-200">Hotel</th>
                 <th class="p-3.5 border-b border-gray-200 w-32 text-center">Action</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-gray-100 text-gray-700 font-medium bg-white">
-              <tr v-for="(account, index) in filteredAccounts" :key="account.id || index" class="hover:bg-slate-50/80 transition-colors">
+              <tr v-for="(accountItem, index) in filteredAccounts" :key="accountItem.id || index" class="hover:bg-slate-50/80 transition-colors">
                 <td class="p-3.5 text-center text-gray-400">{{ index + 1 }}</td>
-                <td class="p-3.5 font-bold text-gray-900">{{ account.name }}</td> 
-                <td class="p-3.5 text-gray-500">{{ account.email }}</td>
+                <td class="p-3.5 font-bold text-gray-900">{{ accountItem.name }}</td> 
+                <td class="p-3.5 text-gray-500">{{ accountItem.email }}</td>
                 <td class="p-3.5">
-                  <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-blue-50 text-blue-600 border border-blue-100 uppercase">{{ account.role }}</span>
+                  <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-blue-50 text-blue-600 border border-blue-100 uppercase">{{ accountItem.role }}</span>
                 </td>
-                <td class="p-3.5 text-indigo-600">{{ account.hotel || '-' }}</td>
+                <td class="p-3.5 text-indigo-600">{{ accountItem.hotel_name || accountItem.hotel?.name || getHotelName(accountItem.hotel_id) || '-' }}</td>
                 <td class="p-3.5 text-center">
                   <div class="flex justify-center items-center gap-2">
-                    <button @click="deleteAccount(account.id)" class="bg-red-500 hover:bg-red-600 p-1.5 rounded text-white text-xs cursor-pointer transition-colors shadow-sm" title="Delete">🗑️</button>
-                    <button @click="openEditModal(account)" class="bg-indigo-600 hover:bg-indigo-700 p-1.5 rounded text-white text-xs cursor-pointer transition-colors shadow-sm" title="Edit">✏️</button>
+                    <button @click="deleteAccount(accountItem.id)" class="bg-red-500 hover:bg-red-600 p-1.5 rounded text-white text-xs cursor-pointer transition-colors shadow-sm" title="Delete">🗑️</button>
+                    <button @click="openEditModal(accountItem)" class="bg-indigo-600 hover:bg-indigo-700 p-1.5 rounded text-white text-xs cursor-pointer transition-colors shadow-sm" title="Edit">✏️</button>
                   </div>
                 </td>
               </tr>
@@ -325,35 +326,38 @@ const handleLogout = () => {
     <div v-if="isModalOpen" class="fixed inset-0 bg-black/50 flex justify-center items-center z-50 p-4 transition-opacity">
       <div class="bg-white w-full max-w-md rounded-xl shadow-xl overflow-hidden transform transition-all">
         <div class="bg-[#2e3a50] text-white p-4 flex justify-between items-center">
-          <h3 class="font-bold text-md flex items-center gap-2">👤 {{ isEditMode ? 'Edit Admin Account' : 'Add New Admin Account' }}</h3>
+          <h3 class="font-bold text-md flex items-center gap-2">👤 {{ isEditMode ? 'Edit Admin Accounts' : 'Add New Admin Accounts' }}</h3>
           <button @click="closeModal" class="text-white hover:text-gray-300 text-lg cursor-pointer">✕</button>
         </div>
-        <form @submit.prevent="submitAccount" class="p-5 space-y-4">
+        <form @submit.prevent="submitAccounts" class="p-5 space-y-4">
           <div>
-            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Name</label> <input v-model="formAccount.name" type="text" required placeholder="e.g. Ferdiyanto" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-indigo-500" />
+            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Name</label> <input v-model="formAccounts.name" type="text" required placeholder="e.g. Ferdiyanto" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-indigo-500" />
           </div>
           <div>
             <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Email Address</label>
-            <input v-model="formAccount.email" type="email" required placeholder="e.g. admin@hotel.com" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-indigo-500" />
+            <input v-model="formAccounts.email" type="email" required placeholder="e.g. admin@hotel.com" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-indigo-500" />
           </div>
           <div>
             <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Password {{ isEditMode ? '(Kosongkan jika tidak diubah)' : '' }}</label>
-            <input v-model="formAccount.password" type="password" :required="!isEditMode" placeholder="••••••••" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-indigo-500" />
+            <input v-model="formAccounts.password" type="password" :required="!isEditMode" placeholder="••••••••" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-indigo-500" />
           </div>
           <div>
             <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Role</label>
-            <select v-model="formAccount.role" required class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:border-indigo-500">
+            <select v-model="formAccounts.role" required class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:border-indigo-500">
               <option value="admin">Admin</option>
               <option value="superadmin">Super Admin</option>
             </select>
           </div>
           <div>
             <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Managing Hotel</label>
-            <input v-model="formAccount.hotel" type="text" placeholder="e.g. Grand Metro" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-indigo-500" />
+            <select v-model="formAccounts.hotel_id" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:border-indigo-500">
+              <option :value="null">None (Super Admin / Regular Customer)</option>
+              <option v-for="h in hotels" :key="h.id" :value="h.id">{{ h.name }}</option>
+            </select>
           </div>
           <div class="flex justify-end gap-2 pt-4 border-t border-gray-100">
             <button type="button" @click="closeModal" class="px-4 py-2 text-sm font-semibold text-gray-500 hover:bg-gray-100 rounded-lg cursor-pointer transition-colors">Cancel</button>
-            <button type="submit" class="px-5 py-2 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg cursor-pointer transition-colors shadow-sm">{{ isEditMode ? 'Update Account' : 'Save Account' }}</button>
+            <button type="submit" class="px-5 py-2 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg cursor-pointer transition-colors shadow-sm">{{ isEditMode ? 'Update Accounts' : 'Save Accounts' }}</button>
           </div>
         </form>
       </div>
@@ -374,27 +378,46 @@ const isLoading = ref(false)
 const currentSelectedId = ref(null)
 const searchQuery = ref('')
 
-// PERBAIKAN: Menggunakan properti 'name' agar cocok dengan payload backend
-const formAccount = ref({ name: '', email: '', password: '', role: 'admin', hotel: '' })
+const formAccounts = ref({ name: '', email: '', password: '', role: 'admin', hotel_id: null })
 const accounts = ref([])
+const hotels = ref([])
 
-// 1. FETCH ACCOUNTS DARI BACKEND
+// Helper to robustly extract arrays from Axios responses (handling direct arrays, Laravel data wrappers, and pagination wrappers)
+const extractArray = (res) => {
+  if (!res) return []
+  const dataObj = res.data
+  if (!dataObj) return []
+  if (dataObj.data && Array.isArray(dataObj.data.data)) return dataObj.data.data
+  if (Array.isArray(dataObj.data)) return dataObj.data
+  if (Array.isArray(dataObj)) return dataObj
+  return []
+}
+
+// 1. FETCH ACCOUNTS & HOTELS DARI BACKEND
+const fetchHotels = async () => {
+  try {
+    const response = await api.get('/hotels')
+    hotels.value = extractArray(response)
+  } catch (error) {
+    console.error('Gagal mengambil data hotel:', error)
+  }
+}
+
 const fetchAccounts = async () => {
   try {
     isLoading.value = true
     const response = await api.get('/accounts') 
     
-    // Mengambil nested object 'data.data' dari standard response Laravel
-    const rawData = response.data.data || response.data
+    const rawData = extractArray(response)
 
-    // Pemetaan data: Memastikan properti 'name' dari backend di-map ke frontend
-    accounts.value = Array.isArray(rawData) ? rawData.map(user => ({
+    accounts.value = rawData.map(user => ({
       id: user.id,
-      name: user.name || 'No Name', // Mengambil properti 'name'
+      name: user.name || 'No Name',
       email: user.email,
       role: user.role,
-      hotel: user.hotel || user.hotel_name || '-'
-    })) : []
+      hotel_id: user.hotel_id,
+      hotel_name: user.hotel?.name || user.hotel_name || '-'
+    }))
 
   } catch (error) {
     console.error('Gagal mengambil data akun:', error)
@@ -404,12 +427,22 @@ const fetchAccounts = async () => {
   }
 }
 
+const getHotelName = (hotelId) => {
+  const h = hotels.value.find(item => item.id === hotelId)
+  return h ? h.name : ''
+}
+
 onMounted(() => {
   const token = localStorage.getItem('token')
-  if (!token) {
+  const role = localStorage.getItem('role')
+  const cleanRole = role ? String(role).trim().toLowerCase().replace(/-/g, '') : ''
+
+  if (!token || cleanRole !== 'superadmin') {
+    alert('Akses ditolak! Halaman ini memerlukan hak akses Super Admin.')
     router.push('/')
     return
   }
+  fetchHotels()
   fetchAccounts()
 })
 
@@ -417,10 +450,11 @@ onMounted(() => {
 const filteredAccounts = computed(() => {
   if (!searchQuery.value) return accounts.value
   const query = searchQuery.value.toLowerCase().trim()
-  return accounts.value.filter(account => {
-    return account.name.toLowerCase().includes(query) || 
-           account.email.toLowerCase().includes(query) ||
-           (account.hotel && account.hotel.toLowerCase().includes(query))
+  return accounts.value.filter(accountItem => {
+    const hotelName = accountItem.hotel_name || getHotelName(accountItem.hotel_id)
+    return accountItem.name.toLowerCase().includes(query) || 
+           accountItem.email.toLowerCase().includes(query) ||
+           (hotelName && hotelName.toLowerCase().includes(query))
   })
 })
 
@@ -430,15 +464,15 @@ const openCreateModal = () => {
   isModalOpen.value = true
 }
 
-const openEditModal = (account) => {
+const openEditModal = (accountItem) => {
   isEditMode.value = true
-  currentSelectedId.value = account.id
-  formAccount.value = {
-    name: account.name, // Memasukkan account.name ke dalam form edit
-    email: account.email,
+  currentSelectedId.value = accountItem.id
+  formAccounts.value = {
+    name: accountItem.name,
+    email: accountItem.email,
     password: '', 
-    role: account.role,
-    hotel: account.hotel
+    role: accountItem.role,
+    hotel_id: accountItem.hotel_id || null
   }
   isModalOpen.value = true
 }
@@ -447,28 +481,28 @@ const closeModal = () => {
   isModalOpen.value = false
   isEditMode.value = false
   currentSelectedId.value = null
-  formAccount.value = { name: '', email: '', password: '', role: 'admin', hotel: '' }
+  formAccounts.value = { name: '', email: '', password: '', role: 'admin', hotel_id: null }
 }
 
 // 4. SAVE / UPDATE DATA KE DB
-const submitAccount = async () => {
+const submitAccounts = async () => {
   try {
     const payload = {
-      name: formAccount.value.name, // Mengirim 'name' ke backend
-      email: formAccount.value.email,
-      role: formAccount.value.role,
-      hotel: formAccount.value.hotel
+      name: formAccounts.value.name,
+      email: formAccounts.value.email,
+      role: formAccounts.value.role,
+      hotel_id: formAccounts.value.hotel_id
     }
 
-    if (formAccount.value.password) {
-      payload.password = formAccount.value.password
+    if (formAccounts.value.password) {
+      payload.password = formAccounts.value.password
     }
 
     if (isEditMode.value) {
-      await api.put(`/account/${currentSelectedId.value}`, payload)
+      await api.put(`/accounts/${currentSelectedId.value}`, payload)
       alert('Akun berhasil diubah!')
     } else {
-      await api.post('/account', payload)
+      await api.post('/auth/register-admin', payload)
       alert('Akun baru berhasil dibuat!')
     }
     
@@ -484,7 +518,7 @@ const submitAccount = async () => {
 const deleteAccount = async (id) => {
   if (confirm('Apakah Anda yakin ingin menghapus akun ini?')) {
     try {
-      await api.delete(`/account/${id}`)
+      await api.delete(`/accounts/${id}`)
       alert('Akun berhasil dihapus!')
       fetchAccounts()
     } catch (error) {

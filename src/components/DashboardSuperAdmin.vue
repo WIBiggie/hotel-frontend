@@ -35,22 +35,22 @@
             <h2 class="text-sm font-bold text-gray-700">Super Admin</h2>
           </div>
           <button @click="handleLogout" class="text-red-500 hover:text-red-700 p-1.5 rounded-lg hover:bg-red-50 text-lg cursor-pointer transition-colors" title="Logout">
-            🚪
+            <span class="bg-red-500 text-white rounded px-1.5 py-0.5 text-xs font-bold">➔</span>
           </button>
         </div>
 
         <div class="space-y-1">
-          <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 px-3">Navigation</p>
+          <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 px-3">navigation</p>
           
           <button @click="isSidebarOpen = false" class="w-full flex items-center gap-3 px-3 py-2.5 bg-indigo-50 border border-indigo-100 text-indigo-700 font-medium rounded-lg text-sm text-left transition-colors">
-            📊 Overview
+            📋 Overview
           </button>
           
           <button 
             @click="router.push('/hotel')" 
             class="w-full flex items-center gap-3 px-3 py-2.5 text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-lg text-sm text-left transition-colors cursor-pointer"
           >
-            🏨 Hotel
+            🏢 Hotel
           </button>
           
           <button 
@@ -75,190 +75,135 @@
 
     <main class="flex-1 flex flex-col p-4 md:p-8 overflow-y-auto bg-slate-50/50 min-w-0">
       
-      <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8">
-        <div class="bg-[#1e293b] text-white p-5 rounded-xl shadow-sm border border-slate-700">
-          <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Registered Hotel</p>
-          <p class="text-3xl font-extrabold mt-1">4</p>
-        </div>
-        <div class="bg-[#1e293b] text-white p-5 rounded-xl shadow-sm border border-slate-700">
-          <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Number of Rooms</p>
-          <p class="text-3xl font-extrabold mt-1">1150</p>
-        </div>
-        <div class="bg-[#1e293b] text-white p-5 rounded-xl shadow-sm border border-slate-700 sm:col-span-2 lg:col-span-1">
-          <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Transactions</p>
-          <p class="text-3xl font-extrabold mt-1">500</p>
-        </div>
-      </section>
+      <div v-if="isLoading" class="text-center py-6 text-gray-500 font-medium">Loading server statistics...</div>
 
-      <section class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden flex-1 w-full min-w-0">
-        <div class="overflow-x-auto w-full">
-          <table class="w-full text-left border-collapse text-sm min-w-[800px]">
-            <thead>
-              <tr class="bg-[#2e3a50] text-white font-semibold">
-                <th class="p-3.5 border-b border-gray-200 w-16 text-center">No</th>
-                <th class="p-3.5 border-b border-gray-200">Hotel</th>
-                <th class="p-3.5 border-b border-gray-200">Address</th>
-                <th class="p-3.5 border-b border-gray-200 w-24 text-center">Rooms</th>
-                <th class="p-3.5 border-b border-gray-200">Administrator</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-100 text-gray-700 font-medium">
-              <tr class="hover:bg-slate-50/80 transition-colors">
-                <td class="p-3.5 text-center text-gray-400">1</td>
-                <td class="p-3.5 font-bold text-gray-900">One Hotel</td>
-                <td class="p-3.5 text-gray-500">Tasikmalaya, Tawang Sari, jln.Khz.Mustofa,</td>
-                <td class="p-3.5 text-center font-semibold">200</td>
-                <td class="p-3.5 text-indigo-600">Admin1</td>
-              </tr>
-              <tr class="hover:bg-slate-50/80 transition-colors">
-                <td class="p-3.5 text-center text-gray-400">2</td>
-                <td class="p-3.5 font-bold text-gray-900">Kehoncewang</td>
-                <td class="p-3.5 text-gray-500">Tasikmalaya, Tawang Sari, jln.Khz.Mustofa,</td>
-                <td class="p-3.5 text-center font-semibold">500</td>
-                <td class="p-3.5 text-indigo-600">Admin2</td>
-              </tr>
-              <tr class="hover:bg-slate-50/80 transition-colors">
-                <td class="p-3.5 text-center text-gray-400">3</td>
-                <td class="p-3.5 font-bold text-gray-900">Dewi Sartika</td>
-                <td class="p-3.5 text-gray-500">Tasikmalaya, Tawang Sari, jln.Khz.Mustofa,</td>
-                <td class="p-3.5 text-center font-semibold">300</td>
-                <td class="p-3.5 text-indigo-600">Admin3</td>
-              </tr>
-              <tr class="hover:bg-slate-50/80 transition-colors">
-                <td class="p-3.5 text-center text-gray-400">4</td>
-                <td class="p-3.5 font-bold text-gray-900">Grand Metro</td>
-                <td class="p-3.5 text-gray-500">Tasikmalaya, Tawang Sari, jln.Khz.Mustofa,</td>
-                <td class="p-3.5 text-center font-semibold">150</td>
-                <td class="p-3.5 text-gray-400 italic font-normal">-</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
+      <div v-else class="w-full">
+        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8 max-w-4xl">
+          <div class="bg-[#1e253b] text-white p-5 rounded-lg shadow-sm border border-slate-700">
+            <p class="text-sm font-bold tracking-wider">Registered Hotel</p>
+            <p class="text-3xl font-extrabold mt-1">{{ stats.totalHotels }}</p>
+          </div>
+          <div class="bg-[#1e253b] text-white p-5 rounded-lg shadow-sm border border-slate-700">
+            <p class="text-sm font-bold tracking-wider">Number of Rooms</p>
+            <p class="text-3xl font-extrabold mt-1">{{ stats.totalRooms }}</p>
+          </div>
+          <div class="bg-[#1e253b] text-white p-5 rounded-lg shadow-sm border border-slate-700">
+            <p class="text-sm font-bold tracking-wider">Total Transactions</p>
+            <p class="text-3xl font-extrabold mt-1">{{ stats.totalTransactions }}</p>
+          </div>
+        </section>
+
+        <section class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden w-full min-w-0">
+          <div class="overflow-x-auto w-full">
+            <table class="w-full text-left border-collapse text-sm min-w-[800px]">
+              <thead>
+                <tr class="bg-[#2a3447] text-white font-semibold border-b border-gray-300">
+                  <th class="p-3 border-r border-gray-600 w-16 text-center">No</th>
+                  <th class="p-3 border-r border-gray-600 w-1/4">Hotel</th>
+                  <th class="p-3 border-r border-gray-600 w-2/5">Address</th>
+                  <th class="p-3 border-r border-gray-600 w-28 text-center">Rooms</th>
+                  <th class="p-3">Administrator</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-200 text-gray-700 bg-white">
+                <tr v-for="(hotel, index) in hotels" :key="hotel.id || index" class="hover:bg-slate-50 transition-colors">
+                  <td class="p-3 text-center text-gray-600 border-r border-gray-200">{{ index + 1 }}</td>
+                  <td class="p-3 text-gray-800 border-r border-gray-200">{{ hotel.name }}</td>
+                  <td class="p-3 text-gray-600 border-r border-gray-200">{{ hotel.address }}</td>
+                  <td class="p-3 text-center text-gray-600 border-r border-gray-200">{{ hotel.rooms_count || hotel.rooms || 0 }}</td>
+                  <td class="p-3 text-gray-600">{{ hotel.administrator || hotel.admin?.name || '-' }}</td>
+                </tr>
+                <tr v-if="hotels.length === 0">
+                  <td colspan="5" class="p-8 text-center text-gray-400 italic bg-gray-50/50">No hotels found.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
 
     </main>
   </div>
 </template>
 
-
-
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import api from '../api' 
 
-const backgroundImageUrl = ref('src/assets/bg-login.jpg')
-const currentForm = ref('login')
 const router = useRouter()
 const isLoading = ref(false) 
+const isSidebarOpen = ref(false)
+const hotels = ref([])
+const stats = ref({ totalHotels: 0, totalRooms: 0, totalTransactions: 0 })
 
-// 2. FUNGSI LOGIN (DISESUAIKAN STRUKTUR RESPONSE LARAVEL)
-const handleLogin = async () => {
+const extractArray = (res) => {
+  if (!res) return []
+  const dataObj = res.data
+  if (!dataObj) return []
+  if (dataObj.data && Array.isArray(dataObj.data.data)) return dataObj.data.data
+  if (Array.isArray(dataObj.data)) return dataObj.data
+  if (Array.isArray(dataObj)) return dataObj
+  return []
+}
+
+const fetchSuperAdminData = async () => {
   try {
     isLoading.value = true
     
-    const response = await api.post('/auth/login', {
-      email: loginForm.email,
-      password: loginForm.password
+    // 1. Ambil list hotel
+    const hotelsRes = await api.get('/hotels')
+    hotels.value = extractArray(hotelsRes)
+
+    // 2. Hitung total kamar berdasarkan properti 'rooms' dari tiap hotel (bukan jumlah baris array)
+    let totalRoomsCount = 0
+    hotels.value.forEach(hotel => {
+      totalRoomsCount += parseInt(hotel.rooms_count || hotel.rooms || 0, 10)
     })
-    
-    // CATATAN PENTING: Sesuaikan destruksi ini dengan isi JSON backend kamu.
-    // Jika bentuknya { token: '...', role: '...' } gunakan baris di bawah:
-    const { token, role } = response.data
-    
-    // JIKA bentuknya { data: { token: '...', user: { role: '...' } } }, ubah menjadi:
-    // const token = response.data.data?.token || response.data.token
-    // const role = response.data.data?.user?.role || response.data.role
-    
-    if (token) {
-      // SIMPAN KE BROWSER
-      localStorage.setItem('token', token)
-      localStorage.setItem('role', role)
-      
-      alert('Login Berhasil!')
-      
-      // Arahkan halaman sesuai hak akses role dari database backend
-      if (role === 'super-admin') {
-        router.push('/dashboardsuperadmin')
-      } else if (role === 'admin') {
-        router.push('/dashboardadmin')
-      } else {
-        router.push('/dashboarduser')
-      }
-    } else {
-      alert('Gagal mendapatkan token otentikasi dari server.')
+
+    // 3. Ambil list bookings
+    let totalTxCount = 0
+    try {
+      const bookingsRes = await api.get('/bookings')
+      const bookings = extractArray(bookingsRes)
+      totalTxCount = bookings.length
+    } catch (err) {
+      console.warn('Gagal memuat detail transaksi untuk statistik:', err)
+    }
+
+    stats.value = {
+      totalHotels: hotels.value.length,
+      totalRooms: totalRoomsCount,
+      totalTransactions: totalTxCount
     }
   } catch (error) {
-    console.error('Login Error:', error)
-    const errorMsg = error.response?.data?.message || 'Email atau Password salah!'
-    alert(errorMsg)
+    console.error('Error fetching Super Admin data:', error)
+    if (error.response?.status === 401 || error.response?.status === 403) {
+      alert('Sesi masuk berakhir atau Anda tidak diizinkan mengakses panel ini.')
+      handleLogout()
+    }
   } finally {
     isLoading.value = false
   }
 }
 
-// 3. FUNGSI GANTI PASSWORD (DIALIKKAN KE /auth/me ATAU ADAPTER KARENA ENDPOINT KHUSUS TIDAK ADA DI DOCS)
-const handleChangePassword = async () => {
-  if (changeForm.newPassword !== changeForm.confirmPassword) {
-    alert('Konfirmasi password baru tidak cocok!')
-    return
-  }
-  
-  try {
-    isLoading.value = true
-    // Catatan: Karena di dokumen rute tidak ada /auth/change-password, 
-    // jika backend kamu menggunakan PUT ke rute profile untuk ganti password, sesuaikan di sini.
-    await api.post('/auth/change-password', {
-      email: changeForm.email,
-      currentPassword: changeForm.currentPassword,
-      password: changeForm.newPassword
-    })
-    
-    alert('Password berhasil diubah! Silakan login kembali.')
-    currentForm.value = 'login'
-    
-    // Reset form
-    changeForm.email = ''
-    changeForm.currentPassword = ''
-    changeForm.newPassword = ''
-    changeForm.confirmPassword = ''
-  } catch (error) {
-    console.error('Change Password Error:', error)
-    alert(error.response?.data?.message || 'Fitur ganti password belum didukung atau rute salah.')
-  } finally {
-    isLoading.value = false
-  }
-}
+onMounted(() => {
+  const token = localStorage.getItem('token')
+  const role = localStorage.getItem('role')
 
-// 4. FUNGSI REGISTER (DISESUAIKAN PARAMETER DENGAN ENDPOINT /auth/register)
-const handleRegister = async () => {
-  if (registerForm.newPassword !== registerForm.confirmPassword) {
-    alert('Konfirmasi password tidak cocok!')
+  const cleanRole = role ? String(role).trim().toLowerCase().replace(/-/g, '') : ''
+  if (!token || cleanRole !== 'superadmin') {
+    alert('Akses ditolak! Halaman ini memerlukan hak akses Super Admin.')
+    router.push('/')
     return
   }
-  
-  try {
-    isLoading.value = true
-    // Tembak endpoint registrasi sesuai dokumen (Public)
-    await api.post('/auth/register', {
-      name: registerForm.name, // disesuaikan dari username -> name jika backend Laravel menggunakan standar kolom 'name'
-      email: registerForm.email,
-      password: registerForm.newPassword
-    })
-    
-    alert('Akun berhasil dibuat! Silakan masuk.')
-    currentForm.value = 'login'
-    
-    // Reset form register
-    registerForm.name = ''
-    registerForm.email = ''
-    registerForm.newPassword = ''
-    registerForm.confirmPassword = ''
-  } catch (error) {
-    console.error('Register Error:', error)
-    alert(error.response?.data?.message || 'Pendaftaran akun gagal.')
-  } finally {
-    isLoading.value = false
-  }
+
+  fetchSuperAdminData()
+})
+
+const handleLogout = () => {
+  localStorage.removeItem('token')
+  localStorage.removeItem('role')
+  router.push('/')
 }
 </script>

@@ -81,9 +81,9 @@
                 <tbody class="divide-y divide-gray-100 text-gray-700">
                   <tr v-for="(tx, index) in transactions" :key="tx.id || index" class="hover:bg-slate-50/50">
                     <td class="p-3 text-center text-gray-400">{{ index + 1 }}</td>
-                    <td class="p-3 font-semibold text-gray-900">{{ tx.guest_name }}</td>
-                    <td class="p-3">Room {{ tx.room_number }}</td>
-                    <td class="p-3 text-indigo-600">{{ tx.room_type }}</td>
+                    <td class="p-3 font-semibold text-gray-900">{{ tx.guest_name || tx.user?.name || tx.customer_name || '-' }}</td>
+                    <td class="p-3">Room {{ tx.room_number || tx.room?.number || tx.room?.room_number || '-' }}</td>
+                    <td class="p-3 text-indigo-600">{{ tx.room_type || tx.room?.room_type?.name || tx.room_type_name || '-' }}</td>
                     <td class="p-3 text-gray-500">{{ tx.check_in }}</td>
                     <td class="p-3">
                       <span :class="tx.status === 'success' ? 'bg-green-50 text-green-600 border border-green-100' : 'bg-amber-50 text-amber-600 border border-amber-100'" class="px-2 py-0.5 text-xs font-semibold rounded-full uppercase">
@@ -121,8 +121,8 @@
                 <tbody class="divide-y divide-gray-100 text-gray-700 bg-white">
                   <tr v-for="(room, index) in rooms" :key="room.id || index" class="hover:bg-slate-50/80">
                     <td class="p-3 text-center text-gray-400">{{ index + 1 }}</td>
-                    <td class="p-3 font-bold text-gray-900">Room {{ room.number }}</td>
-                    <td class="p-3 text-indigo-600 font-semibold">{{ room.type_name }}</td>
+                    <td class="p-3 font-bold text-gray-900">Room {{ room.number || room.room_number }}</td>
+                    <td class="p-3 text-indigo-600 font-semibold">{{ room.type_name || room.room_type?.name || getRoomTypeName(room.room_type_id) || '-' }}</td>
                     <td class="p-3 text-center">
                       <span :class="room.status === 'available' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'" class="px-3 py-1 rounded-full text-xs font-bold uppercase">
                         {{ room.status }}
@@ -192,8 +192,8 @@
           </div>
           <div>
             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Room Type</label>
-            <select v-model="formRoom.type_name" required class="w-full px-3 py-2 border rounded-lg text-sm bg-white focus:outline-none focus:border-indigo-500">
-              <option v-for="t in roomTypes" :key="t.id" :value="t.name">{{ t.name }}</option>
+            <select v-model="formRoom.room_type_id" required class="w-full px-3 py-2 border rounded-lg text-sm bg-white focus:outline-none focus:border-indigo-500">
+              <option v-for="t in roomTypes" :key="t.id" :value="t.id">{{ t.name }}</option>
             </select>
           </div>
           <div>
@@ -264,12 +264,23 @@ const stats = ref({ totalRooms: 0, availableRooms: 0, totalTransactions: 0 })
 // Modals Control Rooms
 const isRoomModalOpen = ref(false)
 const isEditRoomMode = ref(false)
-const formRoom = ref({ number: '', type_name: '', status: 'available' })
+const formRoom = ref({ number: '', type_name: '', room_type_id: null, status: 'available' })
 
 // Modals Control Room Types
 const isRoomTypeModalOpen = ref(false)
 const isEditRoomTypeMode = ref(false)
 const formRoomType = ref({ name: '', facilities: '', price: null, capacity: 2 })
+
+// Helper to robustly extract arrays from Axios responses (handling direct arrays, Laravel data wrappers, and pagination wrappers)
+const extractArray = (res) => {
+  if (!res) return []
+  const dataObj = res.data
+  if (!dataObj) return []
+  if (dataObj.data && Array.isArray(dataObj.data.data)) return dataObj.data.data
+  if (Array.isArray(dataObj.data)) return dataObj.data
+  if (Array.isArray(dataObj)) return dataObj
+  return []
+}
 
 // ================= AMBIL DATA NYATA (FETCH BACKEND) =================
 const fetchDashboardData = async () => {
@@ -278,15 +289,15 @@ const fetchDashboardData = async () => {
     
     // 1. Ambil data kamar langsung dari endpoint publik/admin kamu (/rooms)
     const roomsRes = await api.get('/rooms')
-    rooms.value = roomsRes.data.data || roomsRes.data
+    rooms.value = extractArray(roomsRes)
 
     // 2. Ambil konfigurasi tipe kamar sesuai dokumentasi (/room-types)
     const typesRes = await api.get('/room-types')
-    roomTypes.value = typesRes.data.data || typesRes.data
+    roomTypes.value = extractArray(typesRes)
 
     // 3. Ambil data transaksi/reservasi dari endpoint booking (/bookings)
     const bookingsRes = await api.get('/bookings')
-    transactions.value = bookingsRes.data.data || bookingsRes.data
+    transactions.value = extractArray(bookingsRes)
 
     // 4. Hitung statistik secara mandiri di frontend karena tidak ada endpoint khusus /dashboard-stats
     const totalRoomsCount = rooms.value.length
@@ -311,13 +322,19 @@ const fetchDashboardData = async () => {
   }
 }
 
+const getRoomTypeName = (typeId) => {
+  const t = roomTypes.value.find(item => item.id === typeId)
+  return t ? t.name : ''
+}
+
 // ROUTE PROTECTION GUARD ON MOUNT
 onMounted(() => {
   const token = localStorage.getItem('token')
   const role = localStorage.getItem('role')
 
   // Mencegah akses masuk ilegal jika bukan admin hotel
-  if (!token || role !== 'admin') {
+  const cleanRole = role ? String(role).trim().toLowerCase().replace(/-/g, '') : ''
+  if (!token || cleanRole !== 'admin') {
     alert('Akses ditolak! Halaman ini memerlukan hak akses Admin Hotel.')
     router.push('/')
     return
@@ -334,20 +351,36 @@ const openCreateRoomModal = () => {
 const openEditRoomModal = (room) => {
   isEditRoomMode.value = true
   currentSelectedId.value = room.id
-  formRoom.value = { number: room.number, type_name: room.type_name, status: room.status }
+  formRoom.value = { 
+    number: room.number || room.room_number, 
+    type_name: room.type_name || room.room_type?.name, 
+    room_type_id: room.room_type_id || roomTypes.value.find(t => t.name === room.type_name)?.id,
+    status: room.status 
+  }
   isRoomModalOpen.value = true
 }
 const closeRoomModal = () => {
   isRoomModalOpen.value = false
-  formRoom.value = { number: '', type_name: '', status: 'available' }
+  formRoom.value = { number: '', type_name: '', room_type_id: null, status: 'available' }
 }
 const submitRoom = async () => {
   try {
+    const payload = {
+      number: formRoom.value.number,
+      room_number: formRoom.value.number,
+      room_type_id: formRoom.value.room_type_id,
+      status: formRoom.value.status
+    }
+    const hotelId = localStorage.getItem('hotel_id')
+    if (hotelId) {
+      payload.hotel_id = parseInt(hotelId)
+    }
+
     if (isEditRoomMode.value) {
-      await api.put(`/admin/rooms/${currentSelectedId.value}`, formRoom.value)
+      await api.put(`/rooms/${currentSelectedId.value}`, payload)
       alert('Kamar berhasil diperbarui!')
     } else {
-      await api.post('/admin/rooms', formRoom.value)
+      await api.post('/rooms', payload)
       alert('Kamar baru sukses ditambahkan!')
     }
     fetchDashboardData()
@@ -359,7 +392,7 @@ const submitRoom = async () => {
 const deleteRoom = async (id) => {
   if (confirm('Hapus kamar ini secara permanen dari database hotel?')) {
     try {
-      await api.delete(`/admin/rooms/${id}`)
+      await api.delete(`/rooms/${id}`)
       fetchDashboardData()
     } catch (error) {
       alert('Gagal menghapus kamar.')
@@ -375,7 +408,7 @@ const openCreateRoomTypeModal = () => {
 const openEditRoomTypeModal = (type) => {
   isEditRoomTypeMode.value = true
   currentSelectedId.value = type.id
-  formRoomType.value = { name: type.name, facilities: type.facilities, price: type.price, capacity: type.capacity }
+  formRoomType.value = { name: type.name, facilities: type.facilities, price: type.price || type.price_per_night, capacity: type.capacity }
   isRoomTypeModalOpen.value = true
 }
 const closeRoomTypeModal = () => {
@@ -384,11 +417,23 @@ const closeRoomTypeModal = () => {
 }
 const submitRoomType = async () => {
   try {
+    const payload = {
+      name: formRoomType.value.name,
+      facilities: formRoomType.value.facilities,
+      price: formRoomType.value.price,
+      price_per_night: formRoomType.value.price,
+      capacity: formRoomType.value.capacity
+    }
+    const hotelId = localStorage.getItem('hotel_id')
+    if (hotelId) {
+      payload.hotel_id = parseInt(hotelId)
+    }
+
     if (isEditRoomTypeMode.value) {
-      await api.put(`/admin/room-types/${currentSelectedId.value}`, formRoomType.value)
+      await api.put(`/room-types/${currentSelectedId.value}`, payload)
       alert('Konfigurasi tipe kamar diperbarui!')
     } else {
-      await api.post('/admin/room-types', formRoomType.value)
+      await api.post('/room-types', payload)
       alert('Tipe kamar baru sukses ditambahkan!')
     }
     fetchDashboardData()
@@ -400,7 +445,7 @@ const submitRoomType = async () => {
 const deleteRoomType = async (id) => {
   if (confirm('Menghapus tipe kamar ini dapat berdampak pada data relasi kamar.')) {
     try {
-      await api.delete(`/admin/room-types/${id}`)
+      await api.delete(`/room-types/${id}`)
       fetchDashboardData()
     } catch (error) {
       alert('Gagal menghapus tipe kamar.')

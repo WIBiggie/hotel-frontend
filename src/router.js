@@ -65,8 +65,15 @@ router.beforeEach((to, from, next) => {
     }
 
     if (to.meta.role) {
-      const cleanMetaRole = String(to.meta.role).trim().toLowerCase();
-      const cleanUserRole = userRole ? String(userRole).trim().toLowerCase() : '';
+      const normalizeRole = (roleStr) => {
+        if (!roleStr) return ''
+        const clean = String(roleStr).trim().toLowerCase().replace(/-/g, '')
+        if (clean === 'user') return 'customer'
+        return clean
+      }
+
+      const cleanMetaRole = normalizeRole(to.meta.role)
+      const cleanUserRole = normalizeRole(userRole)
 
       if (cleanMetaRole !== cleanUserRole) {
         alert(`Akses ditolak! Role Anda adalah "${userRole}", tidak diizinkan masuk ke halaman "${to.meta.role}".`)

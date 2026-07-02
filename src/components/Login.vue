@@ -206,32 +206,34 @@ const handleLogin = async () => {
       password: loginForm.password
     });
 
-    const role = response.data.user.role; 
-    const token = response.data.token; 
+    const token = response.data.token || response.data.data?.token;
+    const user = response.data.user || response.data.data?.user;
+    const role = response.data.role || user?.role || response.data.data?.role;
 
     if (token) {
-      // Pastikan disimpan dengan string murni huruf kecil tanpa spasi
-      const cleanRole = String(role).trim().toLowerCase();
+      const cleanRole = String(role).trim().toLowerCase().replace(/-/g, '');
 
       localStorage.setItem('token', token);
       localStorage.setItem('role', cleanRole);
+      
+      if (user && user.hotel_id) {
+        localStorage.setItem('hotel_id', user.hotel_id);
+      } else {
+        localStorage.removeItem('hotel_id');
+      }
 
-      // PERBAIKAN UTAMA: Gunakan 'superadmin' tanpa strip (-)
-      if (cleanRole === 'super-admin') {
+      if (cleanRole === 'superadmin') {
         router.push('/dashboardsuperadmin');
       } else if (cleanRole === 'admin') {
         router.push('/dashboardadmin');
-      } else if (cleanRole === 'customer') {
+      } else if (cleanRole === 'customer' || cleanRole === 'user') {
         router.push('/dashboarduser');
       } else {
         router.push('/');
       }
 
       alert('Login Berhasil!');
-
-      
     }
-
   } catch (error) {
     console.error('Login Error:', error);
     const errorMessage = error.response?.data?.message || 'Email atau Password salah!';

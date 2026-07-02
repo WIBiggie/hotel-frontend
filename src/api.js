@@ -1,8 +1,7 @@
 import axios from 'axios'
 
 const api = axios.create({
-  // Ubah port dari :8001 menjadi :8000
-  baseURL: 'http://192.168.18.8:8001/', 
+  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://192.168.33.111:8001/', 
   headers: {
     'Content-Type': 'application/json'
   }
