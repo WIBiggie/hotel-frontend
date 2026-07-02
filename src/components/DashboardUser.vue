@@ -106,12 +106,15 @@
                     <span class="text-xl">🏨</span>
                   </div>
                   <p class="text-xs text-slate-500 leading-relaxed line-clamp-3">{{ room.facilities || room.description }}</p>
+                  <div class="bg-indigo-500 w-fit px-2 rounded-xl">
+                    <p class="text-base text-slate-500 leading-relaxed line-clamp-3 text-white">{{ room.status}}</p>
+                  </div>
                   <div class="flex items-center gap-4 text-xs font-semibold text-slate-400 pt-2">
                     <span>👥 Max {{ room.capacity }} Pax</span>
                   </div>
                 </div>
               </div>
-              <div class="p-5 pt-0 border-t border-slate-50 mt-4 flex justify-between items-center bg-slate-50/50">
+              <div class="p-5 pt-0 border-t border-slate-50 mt-1 flex justify-between items-center bg-slate-50/50">
                 <div>
                   <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Price / Night</p>
                   <p class="text-md font-black text-indigo-600">Rp {{ room.price?.toLocaleString('id-ID') }}</p>
@@ -287,7 +290,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import api from '../api'
 
@@ -351,24 +354,68 @@ const isPending = (status) => {
 
 // ===== DATA FETCHING =====
 
+// const fetchUserDashboardData = async () => {
+//   try {
+//     isLoading.value = true
+
+//     // Fetch individual rooms (bukan room-types) agar room_id yang dikirim ke backend benar
+//     const roomsRes = await api.get('/rooms')
+//     const rawRooms = extractArray(roomsRes)
+//     roomsDatabase.value = rawRooms
+//       .filter(r => (r.status || '').toLowerCase() === 'available')
+//       .map(r => ({
+//         id: r.id,                                        // room_id asli
+//         name: r.room_type?.name || r.name || `Room ${r.room_number}`,
+//         capacity: r.room_type?.capacity || r.capacity,
+//         facilities: r.room_type?.facilities || r.facilities || r.description,
+//         price: parseFloat(r.price || r.room_type?.price_per_night || 0),
+//         img_url: r.img_url || r.room_type?.img_url,
+//         room_number: r.room_number,
+//         description: r.description
+//       }))
+
+//     const historyRes = await api.get('/bookings')
+//     historyReservations.value = extractArray(historyRes)
+
+//   } catch (error) {
+//     console.error('Error fetching user dashboard data:', error)
+//     if (error.response?.status === 401 || error.response?.status === 403) {
+//       alert('Sesi masuk berakhir. Silakan login kembali.')
+//       handleLogout()
+//     }
+//   } finally {
+//     isLoading.value = false
+//   }
+// }
+
+// ===== DATA FETCHING (DENGAN QUERY PARAMETER TANGGAL) =====
+
 const fetchUserDashboardData = async () => {
   try {
     isLoading.value = true
 
-    // Fetch individual rooms (bukan room-types) agar room_id yang dikirim ke backend benar
-    const roomsRes = await api.get('/rooms')
+    // Tambahkan parameter query check_in dan check_out sesuai inputan filter user
+    const roomsRes = await api.get('/rooms', {
+      params: {
+        check_in: filter.value.checkIn,
+        check_out: filter.value.checkOut
+      }
+    })
+    
     const rawRooms = extractArray(roomsRes)
     roomsDatabase.value = rawRooms
+      // Hanya memunculkan kamar yang statusnya 'available' ke sisi user
       .filter(r => (r.status || '').toLowerCase() === 'available')
       .map(r => ({
-        id: r.id,                                        // room_id asli
+        id: r.id,                                        
         name: r.room_type?.name || r.name || `Room ${r.room_number}`,
         capacity: r.room_type?.capacity || r.capacity,
         facilities: r.room_type?.facilities || r.facilities || r.description,
         price: parseFloat(r.price || r.room_type?.price_per_night || 0),
         img_url: r.img_url || r.room_type?.img_url,
         room_number: r.room_number,
-        description: r.description
+        description: r.description,
+        status: r.status || 'Available'
       }))
 
     const historyRes = await api.get('/bookings')
@@ -384,6 +431,18 @@ const fetchUserDashboardData = async () => {
     isLoading.value = false
   }
 }
+
+// ===== WATCHER UNTUK FILTER TANGGAL =====
+// Fitur ini otomatis memanggil API baru setiap kali user mengubah tanggal check-in atau check-out
+watch(
+  () => [filter.value.checkIn, filter.value.checkOut],
+  ([newCheckIn, newCheckOut]) => {
+    // Pastikan kedua tanggal sudah terisi sebelum menembak API
+    if (newCheckIn && newCheckOut) {
+      fetchUserDashboardData()
+    }
+  }
+)
 
 onMounted(() => {
   const token = localStorage.getItem('token')
