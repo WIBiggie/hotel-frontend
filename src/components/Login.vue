@@ -206,6 +206,7 @@ const handleLogin = async () => {
       password: loginForm.password
     });
 
+    // Ekstraksi data secara aman baik dari root maupun nested 'data'
     const token = response.data.token || response.data.data?.token;
     const user = response.data.user || response.data.data?.user;
     const role = response.data.role || user?.role || response.data.data?.role;
@@ -213,15 +214,22 @@ const handleLogin = async () => {
     if (token) {
       const cleanRole = String(role).trim().toLowerCase().replace(/-/g, '');
 
+      // Simpan credentials utama
       localStorage.setItem('token', token);
       localStorage.setItem('role', cleanRole);
       
+      // Ambil hotel_id dari object user yang sudah terekstrak dengan aman
       if (user && user.hotel_id) {
         localStorage.setItem('hotel_id', user.hotel_id);
       } else {
+        // Jika login sebagai superadmin (tidak punya hotel_id), bersihkan sisa token lama
         localStorage.removeItem('hotel_id');
       }
 
+      // Tampilkan alert sebelum berpindah halaman agar alur eksekusi mulus
+      alert('Login Berhasil!');
+
+      // Pengalihan halaman berdasarkan role
       if (cleanRole === 'superadmin') {
         router.push('/dashboardsuperadmin');
       } else if (cleanRole === 'admin') {
@@ -231,8 +239,6 @@ const handleLogin = async () => {
       } else {
         router.push('/');
       }
-
-      alert('Login Berhasil!');
     }
   } catch (error) {
     console.error('Login Error:', error);
@@ -244,6 +250,7 @@ const handleLogin = async () => {
 const handleLogout = () => {
   localStorage.removeItem('token');
   localStorage.removeItem('role');
+  localStorage.removeItem('hotel.id');
   router.push('/login');
 };
 

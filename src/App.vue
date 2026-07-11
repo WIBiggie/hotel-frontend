@@ -1,4 +1,6 @@
 <template>
+  <script src="https://iconify.design"></script>
+
   <router-view />
 </template>
 

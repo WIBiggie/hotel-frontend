@@ -263,13 +263,13 @@ const handleLogout = () => {
           <div class="flex-1">
             <h2 class="text-sm font-bold text-gray-700">Super Admin</h2>
           </div>
-          <button @click="handleLogout" class="text-red-500 hover:text-red-700 p-1.5 rounded-lg hover:bg-red-50 text-lg cursor-pointer transition-colors" title="Logout">🚪</button>
+          <button @click="handleLogout" class="text-red-500 hover:text-red-700 p-1.5 rounded-lg hover:bg-red-50 text-lg cursor-pointer transition-colors" title="Logout"><LogoutIcon height="1em" /></button>
         </div>
         <div class="space-y-1">
           <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 px-3">Navigation</p>
-          <button @click="router.push('/dashboardsuperadmin')" class="w-full flex items-center gap-3 px-3 py-2.5 text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-lg text-sm text-left transition-colors cursor-pointer">📊 Overview</button>
-          <button @click="router.push('/hotel')" class="w-full flex items-center gap-3 px-3 py-2.5 text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-lg text-sm text-left transition-colors cursor-pointer">🏨 Hotel</button>
-          <button class="w-full flex items-center gap-3 px-3 py-2.5 bg-indigo-50 border border-indigo-100 text-indigo-700 font-medium rounded-lg text-sm text-left transition-colors">👤 Account Management</button>
+          <button @click="router.push('/dashboardsuperadmin')" class="w-full flex items-center gap-3 px-3 py-2.5 text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-lg text-sm text-left transition-colors cursor-pointer"><WidgetMenuIcon height="1em" /> Overview</button>
+          <button @click="router.push('/hotel')" class="w-full flex items-center gap-3 px-3 py-2.5 text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-lg text-sm text-left transition-colors cursor-pointer"><FamilyHomeIcon height="1em" /> Hotel</button>
+          <button class="w-full flex items-center gap-3 px-3 py-2.5 bg-indigo-50 border border-indigo-100 text-indigo-700 font-medium rounded-lg text-sm text-left transition-colors"><AccountBoxIcon height="1em" /> Account Management</button>
         </div>
       </div>
     </aside>
@@ -309,8 +309,8 @@ const handleLogout = () => {
                 <td class="p-3.5 text-indigo-600">{{ accountItem.hotel_name || accountItem.hotel?.name || getHotelName(accountItem.hotel_id) || '-' }}</td>
                 <td class="p-3.5 text-center">
                   <div class="flex justify-center items-center gap-2">
-                    <button @click="deleteAccount(accountItem.id)" class="bg-red-500 hover:bg-red-600 p-1.5 rounded text-white text-xs cursor-pointer transition-colors shadow-sm" title="Delete">🗑️</button>
-                    <button @click="openEditModal(accountItem)" class="bg-indigo-600 hover:bg-indigo-700 p-1.5 rounded text-white text-xs cursor-pointer transition-colors shadow-sm" title="Edit">✏️</button>
+                    <button @click="deleteAccount(accountItem.id)" class="bg-red-500 hover:bg-red-600 p-1.5 rounded text-white text-xs cursor-pointer transition-colors shadow-sm" title="Delete"><RestoreFromTrashOutlineIcon height="1em" /></button>
+                    <button @click="openEditModal(accountItem)" class="bg-indigo-600 hover:bg-indigo-700 p-1.5 rounded text-white text-xs cursor-pointer transition-colors shadow-sm" title="Edit"><EditIcon height="1em" /></button>
                   </div>
                 </td>
               </tr>
@@ -326,7 +326,7 @@ const handleLogout = () => {
     <div v-if="isModalOpen" class="fixed inset-0 bg-black/50 flex justify-center items-center z-50 p-4 transition-opacity">
       <div class="bg-white w-full max-w-md rounded-xl shadow-xl overflow-hidden transform transition-all">
         <div class="bg-[#2e3a50] text-white p-4 flex justify-between items-center">
-          <h3 class="font-bold text-md flex items-center gap-2">👤 {{ isEditMode ? 'Edit Admin Accounts' : 'Add New Admin Accounts' }}</h3>
+          <h3 class="font-bold text-md flex items-center gap-2"><AccountBoxIcon height="1em" /> {{ isEditMode ? 'Edit Admin Accounts' : 'Add New Admin Accounts' }}</h3>
           <button @click="closeModal" class="text-white hover:text-gray-300 text-lg cursor-pointer">✕</button>
         </div>
         <form @submit.prevent="submitAccounts" class="p-5 space-y-4">

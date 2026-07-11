@@ -3,7 +3,7 @@
     
     <header class="md:hidden bg-white border-b border-gray-200 p-4 flex justify-between items-center z-30 shadow-sm print:hidden">
       <div class="flex items-center gap-2">
-        <div class="w-8 h-8 bg-[#2e3a50] rounded-full flex justify-center items-center text-white text-md">🏨</div>
+        <div class="w-8 h-8 bg-[#2e3a50] rounded-full flex justify-center items-center text-white text-md"><HomeWorkIcon height="1em" /></div>
         <h2 class="text-sm font-bold text-gray-700">One Hotel Admin</h2>
       </div>
       <button @click="isSidebarOpen = !isSidebarOpen" class="p-2 text-gray-600 hover:bg-gray-100 rounded-lg text-xl cursor-pointer">
@@ -16,19 +16,19 @@
     <aside class="fixed inset-y-0 left-0 transform md:relative md:translate-x-0 w-64 bg-white border-r border-gray-200 flex flex-col justify-between p-5 shadow-sm z-20 transition-transform duration-300 ease-in-out print:hidden" :class="isSidebarOpen ? 'translate-x-0 pt-20 md:pt-5' : '-translate-x-full'">
       <div>
         <div class="hidden md:flex items-center gap-3 mb-8 pb-4 border-b border-gray-100">
-          <div class="w-10 h-10 bg-[#2e3a50] rounded-full flex justify-center items-center text-white text-xl shadow-sm">🏨</div>
+          <div class="w-10 h-10 bg-[#2e3a50] rounded-full flex justify-center items-center text-white text-xl shadow-sm"><HomeWorkIcon height="1em" /></div>
           <div class="flex-1">
             <h2 class="text-sm font-bold text-gray-700">Hotel Admin</h2>
             <p class="text-xs text-green-500 font-medium">● Connected to Server</p>
           </div>
-          <button @click="handleLogout" class="text-red-500 hover:text-red-700 p-1.5 rounded-lg hover:bg-red-50 text-lg cursor-pointer transition-colors" title="Logout">🚪</button>
+          <button @click="handleLogout" class="text-red-500 hover:text-red-700 p-1.5 rounded-lg hover:bg-red-50 text-lg cursor-pointer transition-colors" title="Logout"><ArrowBackRoundedIcon height="1em" /></button>
         </div>
 
         <div class="space-y-1">
           <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 px-3">Menu Admin</p>
-          <button @click="currentTab = 'overview'" :class="currentTab === 'overview' ? 'bg-indigo-50 text-indigo-700 font-medium border border-indigo-100' : 'text-gray-600 hover:bg-gray-50'" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-left transition-colors cursor-pointer">📊 Overview & Reports</button>
-          <button @click="currentTab = 'rooms'" :class="currentTab === 'rooms' ? 'bg-indigo-50 text-indigo-700 font-medium border border-indigo-100' : 'text-gray-600 hover:bg-gray-50'" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-left transition-colors cursor-pointer">🛏️ Manage Rooms</button>
-          <button @click="currentTab = 'roomTypes'" :class="currentTab === 'roomTypes' ? 'bg-indigo-50 text-indigo-700 font-medium border border-indigo-100' : 'text-gray-600 hover:bg-gray-50'" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-left transition-colors cursor-pointer">🏷️ Room Types</button>
+          <button @click="currentTab = 'overview'" :class="currentTab === 'overview' ? 'bg-indigo-50 text-indigo-700 font-medium border border-indigo-100' : 'text-gray-600 hover:bg-gray-50'" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-left transition-colors cursor-pointer"><WidgetMenuIcon height="1em" /> Overview & Reports</button>
+          <button @click="currentTab = 'rooms'" :class="currentTab === 'rooms' ? 'bg-indigo-50 text-indigo-700 font-medium border border-indigo-100' : 'text-gray-600 hover:bg-gray-50'" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-left transition-colors cursor-pointer"><BedroomChildIcon height="1em" /> Manage Rooms</button>
+          <button @click="currentTab = 'roomTypes'" :class="currentTab === 'roomTypes' ? 'bg-indigo-50 text-indigo-700 font-medium border border-indigo-100' : 'text-gray-600 hover:bg-gray-50'" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-left transition-colors cursor-pointer"><NestMultiRoomRoundedIcon height="1em" /> Room Types</button>
         </div>
       </div>
       <div class="md:hidden block mb-4">
@@ -130,8 +130,8 @@
                     </td>
                     <td class="p-3 text-center">
                       <div class="flex justify-center gap-2">
-                        <button @click="deleteRoom(room.id)" class="bg-red-500 hover:bg-red-600 p-1.5 rounded text-white text-xs cursor-pointer shadow-sm">🗑️</button>
-                        <button @click="openEditRoomModal(room)" class="bg-indigo-600 hover:bg-indigo-700 p-1.5 rounded text-white text-xs cursor-pointer shadow-sm">✏️</button>
+                        <button @click="deleteRoom(room.id)" class="bg-red-500 hover:bg-red-600 p-1.5 rounded text-white text-xs cursor-pointer shadow-sm"><RestoreFromTrashOutlineIcon height="1em" /></button>
+                        <button @click="openEditRoomModal(room)" class="bg-indigo-600 hover:bg-indigo-700 p-1.5 rounded text-white text-xs cursor-pointer shadow-sm"><EditIcon height="1em" /></button>
                       </div>
                     </td>
                   </tr>
@@ -169,8 +169,8 @@
                     <td class="p-3 text-emerald-600 font-bold">Rp {{ type.price_per_night?.toLocaleString('id-ID') }}</td>
                     <td class="p-3 text-center">
                       <div class="flex justify-center gap-2">
-                        <button @click="deleteRoomType(type.id)" class="bg-red-500 hover:bg-red-600 p-1.5 rounded text-white text-xs cursor-pointer shadow-sm">🗑️</button>
-                        <button @click="openEditRoomTypeModal(type)" class="bg-indigo-600 hover:bg-indigo-700 p-1.5 rounded text-white text-xs cursor-pointer shadow-sm">✏️</button>
+                        <button @click="deleteRoomType(type.id)" class="bg-red-500 hover:bg-red-600 p-1.5 rounded text-white text-xs cursor-pointer shadow-sm"><RestoreFromTrashOutlineIcon height="1em" /></button>
+                        <button @click="openEditRoomTypeModal(type)" class="bg-indigo-600 hover:bg-indigo-700 p-1.5 rounded text-white text-xs cursor-pointer shadow-sm"><EditIcon height="1em" /></button>
                       </div>
                     </td>
                   </tr>
@@ -182,7 +182,7 @@
       </div>
     </main>
 
-    <div v-if="isRoomModalOpen" class="fixed inset-0 bg-black/50 flex justify-center items-center z-50 p-4">
+    <!-- <div v-if="isRoomModalOpen" class="fixed inset-0 bg-black/50 flex justify-center items-center z-50 p-4">
       <div class="bg-white w-full max-w-sm rounded-xl shadow-xl overflow-hidden">
         <div class="bg-[#2e3a50] text-white p-4 font-bold text-sm">{{ isEditRoomMode ? 'Edit Room' : 'Add New Room' }}</div>
         <form @submit.prevent="submitRoom" class="p-4 space-y-3">
@@ -209,7 +209,82 @@
           </div>
         </form>
       </div>
+    </div> -->
+
+    <div v-if="isRoomModalOpen" class="fixed inset-0 bg-black/50 flex justify-center items-center z-50 p-4 transition-opacity">
+  <div class="bg-white w-full max-w-md rounded-xl shadow-xl overflow-hidden transform transition-all">
+    <div class="bg-[#2a3447] text-white p-4 flex justify-between items-center">
+      <h3 class="font-bold text-md flex items-center gap-2"><EditIcon height="1em" /> {{ isEditRoomMode ? 'Edit Room Details' : 'Add New Room' }}</h3>
+      <button @click="closeRoomModal" class="text-white hover:text-gray-300 text-lg cursor-pointer">✕</button>
     </div>
+
+    <form @submit.prevent="submitRoom" class="p-5 space-y-4 max-h-[80vh] overflow-y-auto">
+      <div>
+        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Room Type</label>
+        <select v-model="formRoom.room_type_id" required class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-indigo-500 bg-white">
+          <option value="" disabled selected>-- Select Type --</option>
+          <option v-for="type in roomTypes" :key="type.id" :value="type.id">
+            {{ type.name }}
+          </option>
+        </select>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Room Number</label>
+          <input v-model="formRoom.room_number" type="text" required placeholder="e.g. 101" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-indigo-500 bg-white" />
+        </div>
+        
+        <div>
+          <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Status</label>
+          <select v-model="formRoom.status" required class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-indigo-500 bg-white">
+            <option value="available">Available</option>
+            <option value="occupied">Occupied</option>
+            <option value="maintenance">Maintenance</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Price per Night</label>
+        <input v-model="formRoom.price" type="number" required placeholder="e.g. 500000" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-indigo-500 bg-white" />
+      </div>
+
+      <!-- <div>
+        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Image URL</label>
+        <input v-model="formRoom.img_url" type="text" placeholder="https://example.com/room.jpg" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-indigo-500 bg-white" />
+      </div> -->
+
+    <div>
+  <label class="block text-[10px] uppercase font-bold text-gray-400 mb-1">Room Image File</label>
+  <input 
+    type="file" 
+    id="input-room-image"
+    accept="image/*" 
+    @change="handleRoomImageChange" 
+    class="w-full px-3 py-2 border border-gray-200 rounded-lg text-xs bg-white focus:outline-none focus:border-indigo-500" 
+  />
+  
+  <div v-if="roomImagePreviewUrl" class="mt-2 flex items-center gap-3 bg-gray-50 p-2 rounded-lg border border-gray-100">
+    <img :src="roomImagePreviewUrl" class="w-16 h-12 object-cover rounded border border-gray-200" alt="Preview Kamar" />
+    <span class="text-[10px] text-gray-400 truncate max-w-[200px]">Selected image preview</span>
+  </div>
+</div>
+
+      <div>
+        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Description</label>
+        <textarea v-model="formRoom.description" rows="3" placeholder="Describe specific room facilities or views..." class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-indigo-500 resize-none bg-white"></textarea>
+      </div>
+
+      <div class="flex justify-end gap-2 pt-4 border-t border-gray-100">
+        <button type="button" @click="closeRoomModal" class="px-4 py-2 text-sm font-semibold text-gray-500 hover:bg-gray-100 rounded-lg cursor-pointer transition-colors">Cancel</button>
+        <button type="submit" class="px-5 py-2 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg cursor-pointer transition-colors shadow-sm">
+          {{ isEditRoomMode ? 'Update Room' : 'Save Room' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
 
     <div v-if="isRoomTypeModalOpen" class="fixed inset-0 bg-black/50 flex justify-center items-center z-50 p-4">
       <div class="bg-white w-full max-w-sm rounded-xl shadow-xl overflow-hidden">
@@ -260,11 +335,22 @@ const rooms = ref([])
 const roomTypes = ref([])
 const transactions = ref([])
 const stats = ref({ totalRooms: 0, availableRooms: 0, totalTransactions: 0 })
+// --- STATE FILE GAMBAR KAMAR ---
+const selectedRoomImageFile = ref(null)
+const roomImagePreviewUrl = ref(null)
 
 // Modals Control Rooms
 const isRoomModalOpen = ref(false)
 const isEditRoomMode = ref(false)
-const formRoom = ref({ number: '', type_name: '', room_type_id: null, status: 'available' })
+// const formRoom = ref({ number: '', type_name: '', room_type_id: null, status: 'available' })
+const formRoom = ref({ 
+  room_type_id: '', 
+  room_number: '', 
+  status: 'available', 
+  description: '',
+  price: '',       
+  img_url: ''      
+})
 
 // Modals Control Room Types
 const isRoomTypeModalOpen = ref(false)
@@ -282,26 +368,41 @@ const extractArray = (res) => {
   return []
 }
 
-// ================= AMBIL DATA NYATA (FETCH BACKEND) =================
 const fetchDashboardData = async () => {
   try {
     isLoading.value = true
     
-    // 1. Ambil data kamar langsung dari endpoint publik/admin kamu (/rooms)
-    const roomsRes = await api.get('/rooms')
-    rooms.value = extractArray(roomsRes)
+    // 1. Ambil ID hotel milik admin yang sedang login dari localStorage
+    const savedHotelId = localStorage.getItem('hotel_id') ? parseInt(localStorage.getItem('hotel_id'), 10) : null
 
-    // 2. Ambil konfigurasi tipe kamar sesuai dokumentasi (/room-types)
+    if (!savedHotelId) {
+      alert('Gagal mendeteksi ID Hotel Anda. Silakan login kembali.')
+      handleLogout()
+      return
+    }
+
+    // 2. Ambil data TIPE KAMAR & saring berdasarkan hotel_id admin ini
     const typesRes = await api.get('/room-types')
-    roomTypes.value = extractArray(typesRes)
+    const allTypes = extractArray(typesRes)
+    roomTypes.value = allTypes.filter(type => parseInt(type.hotel_id, 10) === savedHotelId)
 
-    // 3. Ambil data transaksi/reservasi dari endpoint booking (/bookings)
+    // 3. OPTIMASI UTAMA: Panggil endpoint /rooms langsung menggunakan query parameter ?hotel_id=
+    // Dengan cara ini, backend hanya mengembalikan kamar yang SAH milik hotel admin ini saja.
+    const roomsRes = await api.get(`/rooms?hotel_id=${savedHotelId}`)
+    rooms.value = extractArray(roomsRes) // Data kamar baru dipastikan langsung masuk ke sini!
+
+    // 4. Ambil data TRANSAKSI/RESERVASI & saring berdasarkan hotel_id admin ini
     const bookingsRes = await api.get('/bookings')
-    transactions.value = extractArray(bookingsRes)
+    const allBookings = extractArray(bookingsRes)
+    transactions.value = allBookings.filter(tx => {
+      return parseInt(tx.hotel_id, 10) === savedHotelId || 
+             parseInt(tx.room?.hotel_id, 10) === savedHotelId ||
+             parseInt(tx.room?.room_type?.hotel_id, 10) === savedHotelId
+    })
 
-    // 4. Hitung statistik secara mandiri di frontend karena tidak ada endpoint khusus /dashboard-stats
+    // 5. Hitung statistik secara otomatis & akurat dari data terfilter
     const totalRoomsCount = rooms.value.length
-    // Asumsi di data kamar kamu terdapat kolom 'status' (misal: 'available' atau 'terisi')
+    // Menghitung yang berstatus 'available' atau nilai 1 (jika berupa boolean/integer di database)
     const availableRoomsCount = rooms.value.filter(room => room.status === 'available' || room.status === 1).length 
     const totalTxCount = transactions.value.length
 
@@ -343,6 +444,14 @@ onMounted(() => {
   fetchDashboardData()
 })
 
+const handleRoomImageChange = (event) => {
+  const file = event.target.files[0]
+  if (file) {
+    selectedRoomImageFile.value = file
+    roomImagePreviewUrl.value = URL.createObjectURL(file) // Tampilkan preview lokal di UI
+  }
+}
+
 // ================= LOGIKA MANAGEMENT KAMAR (CRUD ROOMS) =================
 const openCreateRoomModal = () => {
   isEditRoomMode.value = false
@@ -351,44 +460,97 @@ const openCreateRoomModal = () => {
 const openEditRoomModal = (room) => {
   isEditRoomMode.value = true
   currentSelectedId.value = room.id
-  formRoom.value = { 
-    number: room.number || room.room_number, 
-    type_name: room.type_name || room.room_type?.name, 
-    room_type_id: room.room_type_id || roomTypes.value.find(t => t.name === room.type_name)?.id,
-    status: room.status 
+  formRoom.value = {
+    room_number: room.room_number,
+    room_type_id: room.room_type_id,
+    status: room.status || 'available'
   }
+  // Muat gambar bawaan database sebagai preview awal jika data img_url tersedia
+  roomImagePreviewUrl.value = room.img_url ? `http://localhost:8001${room.img_url}` : null
   isRoomModalOpen.value = true
 }
+
 const closeRoomModal = () => {
   isRoomModalOpen.value = false
-  formRoom.value = { number: '', type_name: '', room_type_id: null, status: 'available' }
+  isEditRoomMode.value = false
+  currentSelectedId.value = null
+  formRoom.value = { room_number: '', room_type_id: '', status: 'available' }
+  
+  // Bersihkan sisa data upload gambar
+  selectedRoomImageFile.value = null
+  roomImagePreviewUrl.value = null
+  const fileInput = document.getElementById('input-room-image')
+  if (fileInput) fileInput.value = '' // Reset fisik input HTML
 }
+
 const submitRoom = async () => {
   try {
-    const payload = {
-      number: formRoom.value.number,
-      room_number: formRoom.value.number,
-      room_type_id: formRoom.value.room_type_id,
-      status: formRoom.value.status
+    isLoading.value = true
+
+    // 1. Buat kontainer FormData
+    const formData = new FormData()
+    
+    // 2. Isi data teks string utama
+    formData.append('room_number', formRoom.value.room_number || '')
+    formData.append('room_type_id', formRoom.value.room_type_id || '')
+    formData.append('status', formRoom.value.status || 'available')
+    
+    // --- SOLUSI: AMBIL DATA PRICE DARI ROOM TYPE YANG DIPILIH ---
+    if (roomTypes.value && formRoom.value.room_type_id) {
+      const selectedType = roomTypes.value.find(t => t.id === parseInt(formRoom.value.room_type_id))
+      if (selectedType) {
+        // Ambil nominal 'price' atau 'price_per_night' dari tipe kamar tersebut
+        const roomPrice = selectedType.price || selectedType.price_per_night || 0
+        formData.append('price', roomPrice)
+      }
     }
+    
+    // Ambil default hotel_id admin jika dibutuhkan relasinya di backend
     const hotelId = localStorage.getItem('hotel_id')
     if (hotelId) {
-      payload.hotel_id = parseInt(hotelId)
+      formData.append('hotel_id', parseInt(hotelId))
     }
 
-    if (isEditRoomMode.value) {
-      await api.put(`/rooms/${currentSelectedId.value}`, payload)
-      alert('Kamar berhasil diperbarui!')
-    } else {
-      await api.post('/rooms', payload)
-      alert('Kamar baru sukses ditambahkan!')
+    // 3. Tangkap file gambar dari DOM dengan ID 'input-room-image'
+    const imageInput = document.getElementById('input-room-image')
+    if (imageInput && imageInput.files && imageInput.files[0]) {
+      formData.append('image', imageInput.files[0])
     }
-    fetchDashboardData()
-    closeRoomModal()
+
+    // 4. Proses Request (Keduanya menggunakan POST)
+    if (isEditRoomMode.value) {
+      formData.append('_method', 'PUT')
+      await api.post(`/rooms/${currentSelectedId.value}`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      })
+      alert('🎉 Konfigurasi kamar & foto berhasil diperbarui!')
+    } else {
+      // Mode Store Baru sekarang sudah membawa field 'price' sehingga lolos validasi backend
+      await api.post('/rooms', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      })
+      alert('🎉 Kamar baru sukses didaftarkan!')
+    }
+
+    fetchDashboardData() 
+    closeRoomModal()     
   } catch (error) {
-    alert(error.response?.data?.message || 'Gagal menyimpan data kamar.')
+    console.error('Gagal menyimpan konfigurasi kamar:', error)
+    
+    // TIPS AGAR TAHU ERROR ASLINYA: Ekstrak pesan dari backend jika ada
+    if (error.response?.data?.data) {
+      const validationErrors = Object.values(error.response.data.data).flat().join('\n')
+      alert(`Validasi Gagal:\n${validationErrors}`)
+    } else if (error.response?.data?.message) {
+      alert(`Gagal: ${error.response.data.message}`)
+    } else {
+      alert('Gagal menyimpan konfigurasi kamar.')
+    }
+  } finally {
+    isLoading.value = false
   }
 }
+
 const deleteRoom = async (id) => {
   if (confirm('Hapus kamar ini secara permanen dari database hotel?')) {
     try {

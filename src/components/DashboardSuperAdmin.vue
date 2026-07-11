@@ -35,7 +35,7 @@
             <h2 class="text-sm font-bold text-gray-700">Super Admin</h2>
           </div>
           <button @click="handleLogout" class="text-red-500 hover:text-red-700 p-1.5 rounded-lg hover:bg-red-50 text-lg cursor-pointer transition-colors" title="Logout">
-            <span class="bg-red-500 text-white rounded px-1.5 py-0.5 text-xs font-bold">➔</span>
+            <span class="bg-red-500 text-white rounded px-1.5 py-0.5 text-xs font-bold"><ArrowBackRoundedIcon height="1em" /></span>
           </button>
         </div>
 
@@ -43,21 +43,21 @@
           <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 px-3">navigation</p>
           
           <button @click="isSidebarOpen = false" class="w-full flex items-center gap-3 px-3 py-2.5 bg-indigo-50 border border-indigo-100 text-indigo-700 font-medium rounded-lg text-sm text-left transition-colors">
-            📋 Overview
+            <AccountBalanceIcon height="1em" /> Overview
           </button>
           
           <button 
             @click="router.push('/hotel')" 
             class="w-full flex items-center gap-3 px-3 py-2.5 text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-lg text-sm text-left transition-colors cursor-pointer"
           >
-            🏢 Hotel
+            <HomeWorkIcon height="1em" /> Hotel
           </button>
           
           <button 
             @click="router.push('/account')" 
             class="w-full flex items-center gap-3 px-3 py-2.5 text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-lg text-sm text-left transition-colors cursor-pointer"
           >
-            👤 Account Management
+            <AccountBoxIcon height="1em" /> Account Management
           </button>
         </div>
       </div>
@@ -106,17 +106,19 @@
                 </tr>
               </thead>
               <tbody class="divide-y divide-gray-200 text-gray-700 bg-white">
-                <tr v-for="(hotel, index) in hotels" :key="hotel.id || index" class="hover:bg-slate-50 transition-colors">
-                  <td class="p-3 text-center text-gray-600 border-r border-gray-200">{{ index + 1 }}</td>
-                  <td class="p-3 text-gray-800 border-r border-gray-200">{{ hotel.name }}</td>
-                  <td class="p-3 text-gray-600 border-r border-gray-200">{{ hotel.address }}</td>
-                  <td class="p-3 text-center text-gray-600 border-r border-gray-200">{{ hotel.rooms_count || hotel.rooms || 0 }}</td>
-                  <td class="p-3 text-gray-600">{{ hotel.administrator || hotel.admin?.name || '-' }}</td>
-                </tr>
-                <tr v-if="hotels.length === 0">
-                  <td colspan="5" class="p-8 text-center text-gray-400 italic bg-gray-50/50">No hotels found.</td>
-                </tr>
-              </tbody>
+  <tr v-for="(hotel, index) in hotels" :key="hotel.id || index" class="hover:bg-slate-50 transition-colors">
+    <td class="p-3 text-center text-gray-600 border-r border-gray-200">{{ index + 1 }}</td>
+    <td class="p-3 text-gray-800 border-r border-gray-200 font-medium">{{ hotel.name }}</td>
+    <td class="p-3 text-gray-600 border-r border-gray-200">{{ hotel.address }}</td>
+    <td class="p-3 text-center text-gray-600 border-r border-gray-200">{{ hotel.rooms_count || 0 }}</td>
+    <td class="p-3 text-gray-600">
+      {{ hotel.admins && hotel.admins.length > 0 ? hotel.admins[0].name : '-' }}
+    </td>
+  </tr>
+  <tr v-if="hotels.length === 0">
+    <td colspan="5" class="p-8 text-center text-gray-400 italic bg-gray-50/50">No hotels found.</td>
+  </tr>
+</tbody>
             </table>
           </div>
         </section>
@@ -137,6 +139,7 @@ const isSidebarOpen = ref(false)
 const hotels = ref([])
 const stats = ref({ totalHotels: 0, totalRooms: 0, totalTransactions: 0 })
 
+// Fungsi ekstrak array bawaan Anda
 const extractArray = (res) => {
   if (!res) return []
   const dataObj = res.data
@@ -151,17 +154,17 @@ const fetchSuperAdminData = async () => {
   try {
     isLoading.value = true
     
-    // 1. Ambil list hotel
-    const hotelsRes = await api.get('/hotels')
-    hotels.value = extractArray(hotelsRes)
+    // 1. Ambil data dari endpoint overview yang baru
+    const hotelsRes = await api.get('/hotels/overview')
+    hotels.value = extractArray(hotelsRes) // Berisi list hotel beserta rooms_count dan admins
 
-    // 2. Hitung total kamar berdasarkan properti 'rooms' dari tiap hotel (bukan jumlah baris array)
+    // 2. Hitung total seluruh kamar secara dinamis dari akumulasi properti rooms_count setiap hotel
     let totalRoomsCount = 0
     hotels.value.forEach(hotel => {
-      totalRoomsCount += parseInt(hotel.rooms_count || hotel.rooms || 0, 10)
+      totalRoomsCount += parseInt(hotel.rooms_count || 0, 10)
     })
 
-    // 3. Ambil list bookings
+    // 3. Ambil data bookings untuk total transaksi
     let totalTxCount = 0
     try {
       const bookingsRes = await api.get('/bookings')
@@ -171,11 +174,13 @@ const fetchSuperAdminData = async () => {
       console.warn('Gagal memuat detail transaksi untuk statistik:', err)
     }
 
+    // 4. Masukkan hasil kalkulasi yang bersih ke dalam state stats
     stats.value = {
-      totalHotels: hotels.value.length,
-      totalRooms: totalRoomsCount,
+      totalHotels: hotels.value.length, // Total jumlah hotel terdaftar
+      totalRooms: totalRoomsCount,     // Total akumulasi seluruh kamar hotel
       totalTransactions: totalTxCount
     }
+
   } catch (error) {
     console.error('Error fetching Super Admin data:', error)
     if (error.response?.status === 401 || error.response?.status === 403) {
